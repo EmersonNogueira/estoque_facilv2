@@ -18,12 +18,20 @@
                         i.custo_unitario, 
                         i.categoria, 
                         e.codigo_local, 
+                        l.nome_local,  -- Nome do local
+                        l.codigo_deposito,  -- Código do depósito (relacionado à tabela depositos)
+                        d.nome_deposito,  -- Nome do depósito
                         e.saldo, 
                         e.validade
                     FROM 
                         itens i
                     LEFT JOIN 
                         estoque e ON i.codigo_item = e.codigo_item
+                    LEFT JOIN 
+                        locais l ON e.codigo_local = l.codigo_local
+                    LEFT JOIN 
+                        depositos d ON l.codigo_deposito = d.codigo_deposito;  -- Junta com a tabela depositos
+
                 ";
         
                 // Adiciona o filtro de busca, se houver
