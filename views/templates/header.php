@@ -34,7 +34,7 @@
     <nav class="header-navbar" id="navbar">
         <ul class="main-nav">
                 <li>
-                    <span>Produtos</span>
+                    <span>Itens</span>
                     <ul class="dropdown-menu">
                         <li><a href="<?php echo $base_url; ?>Item/">Estoque</a></li>
                         <li><a href="<?php echo $base_url; ?>Item/itens_saldo">Itens</a></li>

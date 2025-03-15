@@ -43,6 +43,21 @@
                 ?>
             </select>
 
+            <label for="situacao">Situação:</label>
+            <select name="situacao" id="situacao" class="filter" onchange="filtrarProdutos()">
+                <option value="">Todas</option>
+                <?php
+                $situacoes = array_unique(array_map(function($produto) {
+                    return !empty($produto['situacao']) ? htmlspecialchars($produto['situacao']) : 'Sem Situação';
+                }, $itens));
+                
+                foreach ($situacoes as $situacaoOption) {
+                    echo "<option value=\"" . strtolower($situacaoOption) . "\">$situacaoOption</option>";
+                }
+                ?>
+            </select>
+
+
         </div>
     </div>
     <div class="total-cost">
@@ -54,30 +69,22 @@
             <div class="card produto-item" 
                  data-nome="<?php echo strtolower(htmlspecialchars($row['descricao'])); ?>"
                  data-categoria="<?php echo strtolower(htmlspecialchars($row['categoria'])); ?>"
-                 data-deposito="<?php echo strtolower(htmlspecialchars($row['nome_deposito'])); ?>"
+                 data-deposito="<?php echo strtolower(!empty($row['nome_deposito']) ? htmlspecialchars($row['nome_deposito']) : 'sem depósito'); ?>"
+                 data-situacao="<?php echo strtolower(htmlspecialchars($row['situacao'])); ?>"
+
                  data-custo="<?php echo htmlspecialchars($row['custo_unitario'] * $row['saldo']); ?>"
                  onclick="toggleButtons(this)">
                 <h2><?php echo htmlspecialchars($row['descricao']); ?></h2>
-                <p><strong>Código:</strong> <?php echo htmlspecialchars($row['codigo_item']); ?></p>
+                <p><strong>Código do item:</strong> <?php echo htmlspecialchars($row['codigo_item']); ?></p>
                 <p><strong>Categoria:</strong> <?php echo htmlspecialchars($row['categoria']); ?></p>
                 <p><strong>Depósito:</strong> <?php echo htmlspecialchars($row['nome_deposito']); ?></p>
                 <p><strong>Local:</strong> <?php echo htmlspecialchars($row['nome_local']); ?></p>
                 <p><strong>Saldo:</strong> <?php echo htmlspecialchars($row['saldo']); ?></p>
                 <p><strong>Situação:</strong> <?php echo htmlspecialchars($row['situacao']); ?></p>
                 <p><strong>Valor Unitário:</strong> R$<?php echo number_format(htmlspecialchars($row['custo_unitario']), 2, ',', '.'); ?></p>
-                <p><strong>Validade:</strong> <?php echo htmlspecialchars($row['validade']); ?></p>
+                <p><strong>Validade:</strong> <?php echo !empty($row['validade']) ? date('d/m/Y', strtotime($row['validade'])) : ''; ?></p>
+
                 <p><strong>Visível:</strong> <?php echo htmlspecialchars($row['visivel']); ?></p>
-                
-                <div class="card-buttons" style="display: none;">
-                    <form method="POST" action="<?php echo $base_url; ?>Produto/mvregistro">
-                        <input type="hidden" name="codigo_item" value="<?php echo htmlspecialchars($row['codigo_item']); ?>">
-                        <button type="submit" class="btn-register">COMPRA / AJUSTES</button>
-                    </form> 
-                    <form method="POST" action="<?php echo $base_url; ?>Produto/mveditar">
-                        <input type="hidden" name="codigo_item" value="<?php echo htmlspecialchars($row['codigo_item']); ?>">
-                        <button type="submit" class="btn-edit">EDITAR PRODUTO</button>
-                    </form>
-                </div>
             </div>
         <?php endforeach; ?>
     </div>
@@ -103,21 +110,25 @@ function filtrarProdutos() {
     let search = normalizeString(document.getElementById('search-input').value);
     let categoria = normalizeString(document.getElementById('categoria').value);
     let deposito = normalizeString(document.getElementById('deposito').value);
+    let situacao = normalizeString(document.getElementById('situacao').value);
 
     let produtos = document.querySelectorAll('.produto-item');
     produtos.forEach(produto => {
         let nome = normalizeString(produto.getAttribute('data-nome'));
         let produtoCategoria = normalizeString(produto.getAttribute('data-categoria'));
         let produtoDeposito = normalizeString(produto.getAttribute('data-deposito'));
+        let produtoSituacao = normalizeString(produto.getAttribute('data-situacao'));
 
         let nomeMatch = nome.includes(search);
         let categoriaMatch = categoria === "" || produtoCategoria === categoria;
         let depositoMatch = deposito === "" || produtoDeposito === deposito;
+        let situacaoMatch = situacao === "" || produtoSituacao === situacao;
 
-        produto.style.display = (nomeMatch && categoriaMatch && depositoMatch) ? "block" : "none";
+        produto.style.display = (nomeMatch && categoriaMatch && depositoMatch && situacaoMatch) ? "block" : "none";
     });
     calcularCustoTotal();
 }
+
 window.onload = calcularCustoTotal;
 
 </script>

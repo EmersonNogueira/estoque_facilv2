@@ -3,6 +3,10 @@
 
     class ItemModel extends Model
     {
+
+        public function item_novo(){
+            
+        }
         public function itens_locais() {
             try {
                 // Captura o parâmetro de busca, se presente
@@ -78,7 +82,9 @@
                         i.situacao, 
                         i.visivel, 
                         i.custo_unitario, 
-                        i.categoria, 
+                        i.categoria,
+                        i.desc_pregao,
+                        i.unidade_medida, 
                         SUM(e.saldo) AS saldo_total
                     FROM 
                         itens i

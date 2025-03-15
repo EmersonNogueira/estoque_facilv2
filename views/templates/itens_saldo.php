@@ -39,6 +39,9 @@
             $situacao = htmlspecialchars($row['situacao']);
             $visivel = htmlspecialchars($row['visivel']);
             $custoUnitario = floatval($row['custo_unitario']);
+            $pregao = htmlspecialchars($row['desc_pregao']);
+            $unidadeMedida = htmlspecialchars($row['unidade_medida']);
+
             $categoria = htmlspecialchars($row['categoria']);
             $saldo = isset($row['saldo_total']) ? intval($row['saldo_total']) : 0;
 
@@ -48,12 +51,15 @@
         ?>
         <div class="card produto-item" data-nome="<?php echo strtolower($descricao); ?>" data-categoria="<?php echo strtolower($categoria); ?>">
             <h2><?php echo $descricao; ?></h2>
-            <p><strong>Código:</strong> <?php echo $codigo; ?></p>
+            <p><strong>Código do item:</strong> <?php echo $codigo; ?></p>
             <p><strong>Categoria:</strong> <?php echo $categoria; ?></p>
             <p><strong>Saldo:</strong> <?php echo $saldo; ?></p>
             <p><strong>Situação:</strong> <?php echo $situacao; ?></p>
             <p><strong>Valor Unitário:</strong> R$<?php echo number_format($custoUnitario, 2, ',', '.'); ?></p>
             <p><strong>Visível:</strong> <?php echo $visivel; ?></p>
+            <p><strong>Descrição do Pregão:</strong> <?php echo $pregao; ?></p>
+            <p><strong>Unidade de Medida:</strong> <?php echo $unidadeMedida; ?></p>
+
             
             <div class="card-buttons">
                 <form method="POST" action="<?php echo $base_url; ?>Produto/mvregistro">
