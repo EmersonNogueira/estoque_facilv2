@@ -35,21 +35,41 @@
 				$itens = $this->model->itens_saldo();
 				$this->view->render('itens_saldo.php', ['itens' => $itens]);
 			} catch (\Exception $e) {
-				error_log("Erro ao carregar produtos: " . $e->getMessage());
-				die("Erro ao carregar produtos: " . $e->getMessage());
+				error_log("Erro ao carregar itens: " . $e->getMessage());
+				die("Erro ao carregar itens: " . $e->getMessage());
 			}
 		}
 
-		public function item_adicionar(){
-			$postData = $_POST;
-
-			// Exibe os dados de forma organizada
-			echo "<pre>"; // Usado para formatar a saída
-			print_r($postData); // Exibe o conteúdo de $postData
-			echo "</pre>";
-
-			
+		public function item_adicionar() {
+			// Sanitiza os dados de entrada
+			$postData = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+		
+			try {
+				$result = $this->model->item_adicionar($postData);
+				
+				if ($result) {
+					$_SESSION['mensagem_confirmacao'] = "Item cadastrado com sucesso";
+				} else {
+					$_SESSION['mensagem_erro'] = "Erro ao cadastrar o produto.";
+				}
+		
+				// Redireciona para a página de itens
+				header("Location: {$this->base_url}Item/");
+				exit;
+				
+			} catch (\Exception $e) {
+				// Registra erro no log
+				error_log("Erro ao adicionar item: " . $e->getMessage());
+		
+				// Salva mensagem de erro na sessão
+				$_SESSION['mensagem_erro'] = "Ocorreu um erro ao processar sua solicitação.";
+				
+				// Redireciona para evitar exibição de erro na tela
+				header("Location: {$this->base_url}Item/");
+				exit;
+			}
 		}
+		
 	}
 
 ?>

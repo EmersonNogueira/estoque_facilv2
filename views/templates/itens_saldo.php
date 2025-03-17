@@ -44,16 +44,19 @@
 
             $categoria = htmlspecialchars($row['categoria']);
             $saldo = isset($row['saldo_total']) ? intval($row['saldo_total']) : 0;
+            $saldo_alocar = isset($row['saldo_alocar']) ? intval($row['saldo_alocar']) : 0;
 
-            // Calcula o custo total para este item
-            $custoItem = $custoUnitario * $saldo;
+            // Calcula o custo total para este item com o saldo em estoque + saldo para alocar
+            $custoItem = $custoUnitario * ($saldo + $saldo_alocar);
             $custoTotal += $custoItem; // Acumula o custo total
         ?>
         <div class="card produto-item" data-nome="<?php echo strtolower($descricao); ?>" data-categoria="<?php echo strtolower($categoria); ?>">
             <h2><?php echo $descricao; ?></h2>
             <p><strong>Código do item:</strong> <?php echo $codigo; ?></p>
             <p><strong>Categoria:</strong> <?php echo $categoria; ?></p>
-            <p><strong>Saldo:</strong> <?php echo $saldo; ?></p>
+            <p><strong>Saldo em estoque:</strong> <?php echo $saldo; ?></p>
+            <p><strong>Saldo para alocar:</strong> <?php echo $saldo_alocar; ?></p>
+
             <p><strong>Situação:</strong> <?php echo $situacao; ?></p>
             <p><strong>Valor Unitário:</strong> R$<?php echo number_format($custoUnitario, 2, ',', '.'); ?></p>
             <p><strong>Visível:</strong> <?php echo $visivel; ?></p>
@@ -62,9 +65,9 @@
 
             
             <div class="card-buttons">
-                <form method="POST" action="<?php echo $base_url; ?>Produto/mvregistro">
+                <form method="POST" action="<?php echo $base_url; ?>Item/registro">
                     <input type="hidden" name="codigo_item" value="<?php echo $codigo; ?>">
-                    <button type="submit" class="btn-register">COMPRA / AJUSTES</button>
+                    <button type="submit" class="btn-register">Alocar produto</button>
                 </form>
                 <form method="POST" action="<?php echo $base_url; ?>Produto/mveditar">
                     <input type="hidden" name="codigo_item" value="<?php echo $codigo; ?>">
@@ -80,9 +83,12 @@
 function calcularCustoTotal() {
     let custoTotal = 0;
     document.querySelectorAll('.produto-item').forEach(produto => {
-        let custoUnitario = parseFloat(produto.querySelector("p:nth-of-type(5)").textContent.replace("Valor Unitário: R$", "").replace(",", ".")) || 0;
-        let saldo = parseFloat(produto.querySelector("p:nth-of-type(3)").textContent.replace("Saldo:", "").trim()) || 0;
-        custoTotal += custoUnitario * saldo;
+        if (produto.style.display !== "none") {
+            let custoUnitario = parseFloat(produto.querySelector("p:nth-of-type(6)").textContent.replace("Valor Unitário: R$", "").replace(",", ".")) || 0;
+            let saldo = parseFloat(produto.querySelector("p:nth-of-type(3)").textContent.replace("Saldo em estoque:", "").trim()) || 0;
+            let saldoAlocar = parseFloat(produto.querySelector("p:nth-of-type(4)").textContent.replace("Saldo para alocar:", "").trim()) || 0;
+            custoTotal += custoUnitario * (saldo + saldoAlocar);
+        }
     });
     document.getElementById("custo-total").textContent = custoTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
 }
@@ -96,28 +102,23 @@ function filtrarProdutos() {
     let categoriaFiltro = normalizeString(document.getElementById("categoria").value);
     
     let produtos = document.querySelectorAll(".produto-item");
-    let custoTotal = 0;
 
     produtos.forEach(produto => {
         let nomeProduto = normalizeString(produto.getAttribute("data-nome"));
         let categoriaProduto = normalizeString(produto.getAttribute("data-categoria"));
-        let custoUnitario = parseFloat(produto.querySelector("p:nth-of-type(5)").textContent.replace("Valor Unitário: R$", "").replace(",", ".")) || 0;
-        let saldo = parseFloat(produto.querySelector("p:nth-of-type(3)").textContent.replace("Saldo:", "").trim()) || 0;
 
         let nomeMatch = nomeProduto.includes(searchInput);
         let categoriaMatch = categoriaFiltro === "" || categoriaProduto === categoriaFiltro;
 
         if (nomeMatch && categoriaMatch) {
             produto.style.display = "block";
-            custoTotal += custoUnitario * saldo;
         } else {
             produto.style.display = "none";
         }
     });
 
-    document.getElementById("custo-total").textContent = custoTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+    calcularCustoTotal(); // Recalcula o custo total após filtrar os produtos
 }
-
 
 document.getElementById("search-input").addEventListener("input", filtrarProdutos);
 document.getElementById("categoria").addEventListener("change", filtrarProdutos);

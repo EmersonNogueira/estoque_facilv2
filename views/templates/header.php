@@ -38,7 +38,7 @@
                     <ul class="dropdown-menu">
                         <li><a href="<?php echo $base_url; ?>Item/">Estoque</a></li>
                         <li><a href="<?php echo $base_url; ?>Item/itens_saldo">Itens</a></li>
-                        <li><a href="<?php echo $base_url; ?>Produto/vaddproduto">Cadastrar novo Produto</a></li>
+                        <li><a href="<?php echo $base_url; ?>Item/Item_novo">Cadastrar novo item</a></li>
                     </ul>
                 </li>
                 <li>

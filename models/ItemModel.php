@@ -29,12 +29,13 @@
                         e.validade
                     FROM 
                         itens i
-                    LEFT JOIN 
-                        estoque e ON i.codigo_item = e.codigo_item
+                    INNER JOIN 
+                        estoque e ON i.codigo_item = e.codigo_item  -- INNER JOIN garante apenas itens no estoque
                     LEFT JOIN 
                         locais l ON e.codigo_local = l.codigo_local
                     LEFT JOIN 
-                        depositos d ON l.codigo_deposito = d.codigo_deposito;  -- Junta com a tabela depositos
+                        depositos d ON l.codigo_deposito = d.codigo_deposito;
+
 
                 ";
         
@@ -84,7 +85,8 @@
                         i.custo_unitario, 
                         i.categoria,
                         i.desc_pregao,
-                        i.unidade_medida, 
+                        i.unidade_medida,
+                        i.saldo_alocar, 
                         SUM(e.saldo) AS saldo_total
                     FROM 
                         itens i
@@ -127,6 +129,25 @@
                 return ['erro' => 'Ocorreu um problema ao buscar os itens. Tente novamente mais tarde.'];
             }
         }
+
+
+        public function item_adicionar($item) {
+            $sql = "INSERT INTO itens (descricao, situacao, saldo_alocar, custo_unitario, visivel, categoria) 
+                    VALUES (:descricao, :situacao, :saldo_alocar, :custo_unitario, :visivel, :categoria)";
+        
+            $stmt = $this->pdo->prepare($sql);
+            
+            $stmt->bindParam(':descricao', $item['descricao'], \PDO::PARAM_STR);
+            $stmt->bindParam(':situacao', $item['situacao'], \PDO::PARAM_STR);
+            $stmt->bindParam(':saldo_alocar', $item['saldo_alocar'], \PDO::PARAM_INT); // Se for um número inteiro
+            $stmt->bindParam(':custo_unitario', $item['custo_unitario'], \PDO::PARAM_STR); // Tratado como string (se for valor em dinheiro)
+            $stmt->bindParam(':visivel', $item['visivel'],  \PDO::PARAM_STR);
+            $stmt->bindParam(':categoria', $item['categoria'], \PDO::PARAM_STR);
+            
+        
+            return $stmt->execute();
+        }
+        
         
         
         
