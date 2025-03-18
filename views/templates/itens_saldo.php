@@ -11,21 +11,34 @@
     <?php endif; ?>
 
     <div class="top-bar">
-            <div class="filters">
-                <input type="search" name="search" id="search-input" placeholder="Descrição do item" class="search-input" oninput="filtrarProdutos()">
-                
-                <label for="categoria">Categoria:</label>
-                <select name="categoria" id="categoria" class="filter" onchange="filtrarProdutos()">
-                    <option value="" selected>Todas</option>
-                    <?php
-                    $categorias = array_unique(array_column($itens, 'categoria'));
-                    foreach ($categorias as $categoriaOption) {
-                        echo "<option value=\"$categoriaOption\">$categoriaOption</option>";
-                    }
-                    ?>
-                </select>
-            </div>
+        <div class="filters">
+            <input type="search" name="search" id="search-input" placeholder="Descrição do item" class="search-input" oninput="filtrarProdutos()">
+            
+            <label for="categoria">Categoria:</label>
+            <select name="categoria" id="categoria" class="filter" onchange="filtrarProdutos()">
+                <option value="" selected>Todas</option>
+                <?php
+                $categorias = array_unique(array_column($itens, 'categoria'));
+                foreach ($categorias as $categoriaOption) {
+                    echo "<option value=\"" . htmlspecialchars($categoriaOption) . "\">" . htmlspecialchars($categoriaOption) . "</option>";
+                }
+                ?>
+            </select>
+            
+            <!-- Filtro por Situação -->
+            <label for="situacao">Situação:</label>
+            <select name="situacao" id="situacao" class="filter" onchange="filtrarProdutos()">
+                <option value="" selected>Todas</option>
+                <?php
+                $situacoes = array_unique(array_column($itens, 'situacao'));
+                foreach ($situacoes as $situacaoOption) {
+                    echo "<option value=\"" . htmlspecialchars($situacaoOption) . "\">" . htmlspecialchars($situacaoOption) . "</option>";
+                }
+                ?>
+            </select>
+        </div>
     </div>
+    
     <div class="total-cost">
         <strong>Valor Total:</strong> R$<span id="custo-total">0.00</span>
     </div>
@@ -50,7 +63,10 @@
             $custoItem = $custoUnitario * ($saldo + $saldo_alocar);
             $custoTotal += $custoItem; // Acumula o custo total
         ?>
-        <div class="card produto-item" data-nome="<?php echo strtolower($descricao); ?>" data-categoria="<?php echo strtolower($categoria); ?>">
+        <div class="card produto-item" 
+             data-nome="<?php echo strtolower($descricao); ?>" 
+             data-categoria="<?php echo strtolower($categoria); ?>"
+             data-situacao="<?php echo strtolower($situacao); ?>">
             <h2><?php echo $descricao; ?></h2>
             <p><strong>Código do item:</strong> <?php echo $codigo; ?></p>
             <p><strong>Categoria:</strong> <?php echo $categoria; ?></p>
@@ -63,7 +79,6 @@
             <p><strong>Descrição do Pregão:</strong> <?php echo $pregao; ?></p>
             <p><strong>Unidade de Medida:</strong> <?php echo $unidadeMedida; ?></p>
 
-            
             <div class="card-buttons">
                 <form method="POST" action="<?php echo $base_url; ?>Item/registro">
                     <input type="hidden" name="codigo_item" value="<?php echo $codigo; ?>">
@@ -100,17 +115,20 @@ function normalizeString(str) {
 function filtrarProdutos() {
     let searchInput = normalizeString(document.getElementById("search-input").value);
     let categoriaFiltro = normalizeString(document.getElementById("categoria").value);
+    let situacaoFiltro = normalizeString(document.getElementById("situacao").value);
     
     let produtos = document.querySelectorAll(".produto-item");
 
     produtos.forEach(produto => {
         let nomeProduto = normalizeString(produto.getAttribute("data-nome"));
         let categoriaProduto = normalizeString(produto.getAttribute("data-categoria"));
+        let situacaoProduto = normalizeString(produto.getAttribute("data-situacao"));
 
         let nomeMatch = nomeProduto.includes(searchInput);
         let categoriaMatch = categoriaFiltro === "" || categoriaProduto === categoriaFiltro;
+        let situacaoMatch = situacaoFiltro === "" || situacaoProduto === situacaoFiltro;
 
-        if (nomeMatch && categoriaMatch) {
+        if (nomeMatch && categoriaMatch && situacaoMatch) {
             produto.style.display = "block";
         } else {
             produto.style.display = "none";
@@ -122,6 +140,7 @@ function filtrarProdutos() {
 
 document.getElementById("search-input").addEventListener("input", filtrarProdutos);
 document.getElementById("categoria").addEventListener("change", filtrarProdutos);
+document.getElementById("situacao").addEventListener("change", filtrarProdutos);
 
 window.onload = calcularCustoTotal;
 </script>

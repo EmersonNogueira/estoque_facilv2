@@ -30,7 +30,7 @@
                     FROM 
                         itens i
                     INNER JOIN 
-                        estoque e ON i.codigo_item = e.codigo_item  -- INNER JOIN garante apenas itens no estoque
+                        estoques e ON i.codigo_item = e.codigo_item  -- INNER JOIN garante apenas itens no estoque
                     LEFT JOIN 
                         locais l ON e.codigo_local = l.codigo_local
                     LEFT JOIN 
@@ -91,7 +91,7 @@
                     FROM 
                         itens i
                     LEFT JOIN 
-                        estoque e ON i.codigo_item = e.codigo_item
+                        estoques e ON i.codigo_item = e.codigo_item
                     GROUP BY 
                         i.codigo_item, i.descricao, i.situacao, i.visivel, i.custo_unitario, i.categoria
                     ORDER BY 
