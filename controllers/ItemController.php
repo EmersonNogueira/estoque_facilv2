@@ -69,6 +69,30 @@
 				exit;
 			}
 		}
+
+		public function alocar(){
+			$itens = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+			
+			if($itens['saldo_alocar']>0){
+				$this->view->render('alocar_itens.php', ['itens' => $itens]);
+				
+			}
+			else{
+				$_SESSION['mensagem_confirmacao'] = "Não a saldo para alocar registre uma compra";
+				header("Location: {$this->base_url}Item/itens_saldo");
+			}
+
+
+
+
+		}
+
+		public function alocar_itensbd(){
+			$itens = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+			echo '<pre>';
+			print_r($itens);
+			echo '</pre>';
+		}
 		
 	}
 

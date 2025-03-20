@@ -4,109 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Produtos</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Incluindo o CSS existente -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="add-product-container">
-        <h1>Cadastro de Novo Produto</h1>
-        <form action="<?php echo $base_url; ?>item/item_adicionar" method="post">
-            <div class="form-group">
-                <label for="nome">DESCRIÇÃO DO ITEM - REF - TAM - COR MARCA ou FABRICANTE:</label>
-                <input type="text" id="item" name="item" required>
-            </div>
-            <div class="form-group">
-                <label for="categoria">Categoria:</label>
-                <select id="categoria" name="categoria" required>
-                    <option value="" disabled selected>Selecione uma Categoria</option>
-                    <option value="Expediente">Expediente</option>
-                    <option value="Manutenção">Manutenção</option>
-                    <option value="Gestão RH">Gestão RH</option>
-                    <option value="Informática">Informática</option>
-                    <option value="Limpeza">Limpeza</option>
-                    <option value="Copa">Copa</option>
-                    <option value="Material didático">Material didático</option>
-                    <option value="Móveis e Utensílios">Móveis e Utensílos</option>
-
-                </select>
-            </div>
+        <h1>Alocação de itens</h1>
+        <form action="<?php echo $base_url; ?>item/alocar_itensbd" method="post">
+            <input type="hidden" name="codigo_item" value="<?php echo htmlspecialchars($itens['codigo_item']); ?>">
 
             <div class="form-group">
-                <label for="deposito">Depósito:</label>
-                <select id="deposito" name="deposito"  onchange="carregarLocais(this.value)">
-                    <option value="" disabled selected>Selecione um Depósito</option>
-                    <!-- Opções de depósito podem ser carregadas dinamicamente ou manualmente -->
-                    <option value="1">Infra.</option>
-                    <option value="2">Zeld.</option>
-                    <option value="3">Almox.</option>
-                    <option value="4">TI</option>
-                    <option value="5">Serviço</option>
-
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="local">Local:</label>
-                <select id="local" name="local" >
-                    <option value="" disabled selected>Selecione um Local</option>
-                </select>
+                <label for="descricao">DESCRIÇÃO DO ITEM - REF - TAM - COR MARCA ou FABRICANTE:</label>
+                <input type="text" id="descricao" name="descricao" value="<?php echo htmlspecialchars($itens['descricao']); ?>" readonly>
             </div>
 
             <div class="form-group">
                 <label for="situacao">Situação:</label>
-                <select id="situacao" name="situacao" required>
-                    <option value="" disabled selected>Selecione a Situação</option>
-                    <option value="Novo">Novo</option>
-                    <option value="Usado">Usado</option>
-                    <option value="Serviço">Serviço</option>
-                </select>
+                <input type="text" id="situacao" name="situacao" value="<?php echo htmlspecialchars($itens['situacao']); ?>" readonly>
             </div>
 
             <div class="form-group">
-                <label for="saldo">Saldo:</label>
-                <input type="number" id="saldo" name="saldo" step="0.01" required>
+                <label>Saldo a alocar:</label>
+                <p><strong id="saldo_alocar_display"><?php echo htmlspecialchars($itens['saldo_alocar']); ?></strong></p>
+                <input type="hidden" id="saldo_alocar" value="<?php echo htmlspecialchars($itens['saldo_alocar']); ?>">
             </div>
 
-            <div class="form-group">
-                <label for="custo">Custo:</label>
-                <input type="number" id="custo" name="custo" step="0.01" required>
+            <div id="alocacoes">
+                <div class="alocacao">
+                    <div class="form-group">
+                        <label for="deposito">Depósito:</label>
+                        <select class="deposito" name="deposito[]" onchange="carregarLocais(this)">
+                            <option value="" disabled selected>Selecione um Depósito</option>
+                            <option value="1">Infra.</option>
+                            <option value="2">Zeld.</option>
+                            <option value="3">Almox.</option>
+                            <option value="4">TI</option>
+                            <option value="5">Serviço</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="local">Local:</label>
+                        <select class="local" name="local[]" onchange="verificarSaldo()">
+                            <option value="" disabled selected>Selecione um Local</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="saldo">Saldo:</label>
+                        <input type="number" class="saldo" name="saldo[]" step="1" min="1" required oninput="verificarSaldo()">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="validade">Data de Validade (opcional):</label>
+                        <input type="date" class="validade" name="validade[]" onchange="verificarSaldo()">
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="visivel">Visível:</label>
-                <select id="visivel" name="visivel" required>
-                    <option value="" disabled selected>Visível para solicitante?</option>
-                    <option value="Sim">SIM</option>
-                    <option value="Não">NÃO</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="pregao">Descrição no pregão:</label>
-                <input type="text" id="desc_pregao" name="desc_pregao">
-            </div>
-
-            <div class="form-group">
-                <label for="unidade_medida">Unidade de medida:</label>
-                <input type="text" id="unidade_medida" name="unidade_medida">
-            </div>
-            <button type="submit" class="btn-submit">Cadastrar Produto</button>
+            <button type="button" id="addAlocacaoBtn" onclick="adicionarAlocacao()">Adicionar Alocação</button>
+            <button type="submit" id="submitBtn" disabled>Alocar ITEM</button>
         </form>
     </div>
 
     <script>
-        function carregarLocais(codigoDeposito) {
-            // Limpa as opções atuais
-            const selectLocal = document.getElementById('local');
+        function carregarLocais(selectDeposito) {
+            const selectLocal = selectDeposito.parentNode.nextElementSibling.querySelector('.local');
             selectLocal.innerHTML = '<option value="" disabled selected>Selecione um Local</option>';
 
-            // Faz a requisição à API
             fetch(`http://localhost/estoque_facil/Local/locais_depositos`)
                 .then(response => response.json())
                 .then(data => {
-                    // Filtra os locais pelo depósito selecionado
-                    const locaisFiltrados = data.filter(item => item.codigo_deposito == codigoDeposito);
-
-                    // Adiciona as opções ao select de local
+                    const locaisFiltrados = data.filter(item => item.codigo_deposito == selectDeposito.value);
                     locaisFiltrados.forEach(local => {
                         const option = document.createElement('option');
                         option.value = local.codigo_local;
@@ -115,6 +83,62 @@
                     });
                 })
                 .catch(error => console.error('Erro ao carregar locais:', error));
+        }
+
+        function adicionarAlocacao() {
+            const novaAlocacao = document.querySelector('.alocacao').cloneNode(true);
+            
+            novaAlocacao.querySelector('.deposito').value = "";
+            novaAlocacao.querySelector('.local').innerHTML = '<option value="" disabled selected>Selecione um Local</option>';
+            novaAlocacao.querySelector('.saldo').value = "";
+            novaAlocacao.querySelector('.validade').value = "";
+            
+            document.getElementById('alocacoes').appendChild(novaAlocacao);
+            verificarSaldo();
+        }
+
+        function verificarSaldo() {
+            let totalAlocado = 0;
+            let saldoValido = true;
+            let duplicatasEncontradas = false;
+            let combinacoes = new Set();
+
+            document.querySelectorAll('.saldo').forEach((input, index) => {
+                const valor = parseInt(input.value) || 0;
+                const local = document.querySelectorAll('.local')[index].value;
+                const validade = document.querySelectorAll('.validade')[index].value || "SEM_VALIDADE"; 
+
+                if (!Number.isInteger(valor) || valor < 1) {
+                    saldoValido = false;
+                    input.value = ""; 
+                }
+
+                totalAlocado += valor;
+
+                const chave = local + "_" + validade;
+                if (combinacoes.has(chave)) {
+                    duplicatasEncontradas = true;
+                } else {
+                    combinacoes.add(chave);
+                }
+            });
+
+            const saldoAlocar = parseInt(document.getElementById('saldo_alocar').value);
+
+            if (totalAlocado > saldoAlocar) {
+                alert("O saldo alocado não pode ser maior que o saldo disponível!");
+                document.querySelectorAll('.saldo').forEach(input => {
+                    input.value = ""; 
+                });
+                totalAlocado = 0;
+            }
+
+            if (duplicatasEncontradas) {
+                alert("Não é permitido alocar o mesmo local e a mesma data de validade mais de uma vez.");
+            }
+
+            document.getElementById('submitBtn').disabled = totalAlocado === 0 || totalAlocado > saldoAlocar || duplicatasEncontradas;
+            document.getElementById('addAlocacaoBtn').disabled = totalAlocado === saldoAlocar;
         }
     </script>
 </body>

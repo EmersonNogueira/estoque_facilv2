@@ -1,15 +1,5 @@
 <div class="container">
     <h1>Itens</h1>
-    
-    <?php if (isset($_SESSION['mensagem_confirmacao'])): ?>
-        <script type="text/javascript">
-            window.onload = function() {
-                alert('<?php echo htmlspecialchars($_SESSION['mensagem_confirmacao']); ?>');
-            };
-        </script>
-        <?php unset($_SESSION['mensagem_confirmacao']); ?>
-    <?php endif; ?>
-
     <div class="top-bar">
         <div class="filters">
             <input type="search" name="search" id="search-input" placeholder="Descrição do item" class="search-input" oninput="filtrarProdutos()">
@@ -80,8 +70,12 @@
             <p><strong>Unidade de Medida:</strong> <?php echo $unidadeMedida; ?></p>
 
             <div class="card-buttons">
-                <form method="POST" action="<?php echo $base_url; ?>Item/registro">
+                <form method="POST" action="<?php echo $base_url; ?>Item/alocar">
                     <input type="hidden" name="codigo_item" value="<?php echo $codigo; ?>">
+                    <input type="hidden" name="saldo_alocar" value="<?php echo $saldo_alocar; ?>">
+                    <input type="hidden" name="descricao" value="<?php echo $descricao; ?>">
+                    <input type="hidden" name="situacao" value="<?php echo $situacao; ?>">
+
                     <button type="submit" class="btn-register">Alocar produto</button>
                 </form>
                 <form method="POST" action="<?php echo $base_url; ?>Produto/mveditar">
@@ -93,6 +87,7 @@
         <?php endforeach; ?>
     </div>
 </div>
+
 
 <script>
 function calcularCustoTotal() {
@@ -143,4 +138,13 @@ document.getElementById("categoria").addEventListener("change", filtrarProdutos)
 document.getElementById("situacao").addEventListener("change", filtrarProdutos);
 
 window.onload = calcularCustoTotal;
+
 </script>
+<?php if (isset($_SESSION['mensagem_confirmacao'])): ?>
+        <script type="text/javascript">
+            window.onload = function() {
+                alert('<?php echo htmlspecialchars($_SESSION['mensagem_confirmacao']); ?>');
+            };
+        </script>
+        <?php unset($_SESSION['mensagem_confirmacao']); ?>
+<?php endif; ?>
