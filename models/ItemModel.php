@@ -147,6 +147,136 @@
         
             return $stmt->execute();
         }
+
+        public function verificarEstoque($codigo_item,$codigo_local, $validade, ) {
+            // Criando a base da query
+            $sql = "SELECT id FROM estoques WHERE codigo_item = :codigo_item AND codigo_local = :codigo_local";
+        
+            // Se validade for NULL, a query precisa ser diferente
+            if ($validade === null) {
+                $sql .= " AND validade IS NULL";
+            } else {
+                $sql .= " AND validade = :validade";
+            }
+        
+            $sql .= " LIMIT 1";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':codigo_item', $codigo_item, \PDO::PARAM_INT);
+            $stmt->bindParam(':codigo_local', $codigo_local, \PDO::PARAM_INT);
+        
+            // Só adiciona validade se não for NULL
+            if ($validade !== null) {
+                $stmt->bindParam(':validade', $validade, \PDO::PARAM_STR);
+            }
+        
+            $stmt->execute();
+            
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+            return $result ? $result['id'] : false;
+        }
+        
+        public function inserirEstoque($codigo_item, $codigo_local, $validade, $saldo) {
+            try {
+                // Prepara a consulta SQL para inserir na tabela estoque, incluindo o saldo
+                $sql = "INSERT INTO estoques (codigo_item, codigo_local, validade, saldo) 
+                        VALUES (:codigo_item, :codigo_local, :validade, :saldo)";
+                
+                $stmt = $this->pdo->prepare($sql);
+                
+                // Vincula os parâmetros
+                $stmt->bindParam(':codigo_item', $codigo_item, \PDO::PARAM_INT);
+                $stmt->bindParam(':codigo_local', $codigo_local, \PDO::PARAM_INT);
+                
+                // Tratamento do valor de validade (caso seja NULL ou string vazia, passará o tipo correto)
+                if ($validade === null || $validade === "") {
+                    $stmt->bindValue(':validade', null, \PDO::PARAM_NULL); // Passando explicitamente como NULL
+                } else {
+                    $stmt->bindParam(':validade', $validade, \PDO::PARAM_STR);
+                }
+                
+                $stmt->bindParam(':saldo', $saldo, \PDO::PARAM_INT);
+                
+                // Executa a consulta
+                if ($stmt->execute()) {
+                    return $this->pdo->lastInsertId(); // Retorna o ID inserido
+                } else {
+                    // Se a inserção falhar, lança exceção com informações do erro
+                    $errorInfo = $stmt->errorInfo();
+                    throw new Exception("Erro ao executar a consulta SQL: " . implode(", ", $errorInfo));
+                }
+            } catch (Exception $e) {
+                // Captura qualquer exceção e exibe a mensagem de erro
+                error_log("Erro: " . $e->getMessage()); // Log do erro
+                echo "Erro: " . $e->getMessage();
+                return false;
+            }
+        }
+
+        public function getSaldo_alocar($codigo_item) {
+            try {
+                // Prepara a consulta SQL para buscar o saldo alocado do item
+                $sql = "SELECT saldo FROM estoques WHERE codigo_item = :codigo_item";
+                
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->bindParam(':codigo_item', $codigo_item, \PDO::PARAM_INT);
+                
+                // Executa a consulta
+                $stmt->execute();
+                
+                // Obtém o resultado
+                $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+                
+                // Retorna o saldo se encontrado, caso contrário retorna 0
+                return $result ? $result['saldo'] : 0;
+                
+            } catch (Exception $e) {
+                // Captura qualquer erro e exibe a mensagem
+                echo "Erro: " . $e->getMessage();
+                return false;
+            }
+        }
+        
+        public function setSaldo_alocar($codigo_item, $saldo) {
+            try {
+                // Prepara a consulta SQL para atualizar o saldo_alocar na tabela itens
+                $sql = "UPDATE itens SET saldo_alocar = :saldo WHERE codigo_item = :codigo_item";
+                
+                $stmt = $this->pdo->prepare($sql);
+                
+                // Vincula os parâmetros
+                $stmt->bindParam(':codigo_item', $codigo_item, \PDO::PARAM_INT);
+                $stmt->bindParam(':saldo', $saldo, \PDO::PARAM_INT);
+                
+                // Executa a consulta
+                if ($stmt->execute()) {
+                    return true; // Retorna verdadeiro se a atualização for bem-sucedida
+                } else {
+                    // Se a atualização falhar, lança exceção com informações do erro
+                    $errorInfo = $stmt->errorInfo();
+                    throw new Exception("Erro ao atualizar saldo_alocar na tabela itens: " . implode(", ", $errorInfo));
+                }
+            } catch (Exception $e) {
+                // Captura qualquer erro e exibe a mensagem
+                echo "Erro: " . $e->getMessage();
+                return false;
+            }
+        }
+        
+        
+        
+        
+
+
+        
+        
+        
+        
+        
+        
+        
+        
         
         
         

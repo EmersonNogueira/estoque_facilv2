@@ -87,13 +87,59 @@
 
 		}
 
-		public function alocar_itensbd(){
+		public function alocar_itensbd() {
 			$itens = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-			echo '<pre>';
-			print_r($itens);
-			echo '</pre>';
+
+
+			foreach ($itens["local"] as $key => $codigo_local) {
+				// Acessando os valores corretos usando o índice $key
+				$validade = $itens["validade"][$key] ?? null;
+				$saldo = $itens["saldo"][$key] ?? 0; // Aqui, pegamos o saldo corretamente, com valor padrão 0
+		
+				// Verifica se os dados necessários existem antes de chamar a função
+				if (!isset($itens["codigo_item"], $validade, $codigo_local, $saldo)) {
+					echo "Erro: Dados ausentes para alocação.";
+					continue;
+				}
+		
+				// Chamada correta do método
+			
+				$existe = $this->model->verificarEstoque($itens["codigo_item"], $codigo_local, $validade);// verifica se existe no estoque se o item já existe no mesmo local e validade 
+		
+				if ($existe == false) { // se não existe com mesmo local e validade
+					// Criar nova linha na tabela estoque, incluindo o saldo
+
+					$sucesso = $this->model->inserirEstoque($itens["codigo_item"], $codigo_local, $validade, $saldo);
+					if ($sucesso == false) {
+						echo "Erro na inserção";
+					} else {
+						//Atualizar saldo alocar do item apos a insercao
+						$saldo_alocar = $itens["saldo_alocar"] - $saldo; 
+						$this->model->setSaldo_alocar($itens["codigo_item"],$saldo_alocar);
+						header("Location: {$this->base_url}Item/itens_saldo");
+
+					}
+				} else {
+					// Atualizar saldo onde o id de estoque é $existe
+				}
+			}
 		}
 		
+
+		
+		
 	}
+
+			//foreach ($dados["local"] as $indice => $valor) {
+
+			
+			//if($existe){
+				//$this->model->aumentar_saldo($itens['codigo_item'],$itens['saldo'][$indice]);
+
+			//}
+			//else{
+				//$this->model->alocar_itens($itens['codigo_item']);
+
+			//}
 
 ?>

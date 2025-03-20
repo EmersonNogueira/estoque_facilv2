@@ -25,14 +25,14 @@
             <div class="form-group">
                 <label>Saldo a alocar:</label>
                 <p><strong id="saldo_alocar_display"><?php echo htmlspecialchars($itens['saldo_alocar']); ?></strong></p>
-                <input type="hidden" id="saldo_alocar" value="<?php echo htmlspecialchars($itens['saldo_alocar']); ?>">
+                <input type="hidden" id="saldo_alocar" name ="saldo_alocar" value="<?php echo htmlspecialchars($itens['saldo_alocar']); ?>">
             </div>
 
             <div id="alocacoes">
                 <div class="alocacao">
                     <div class="form-group">
                         <label for="deposito">Depósito:</label>
-                        <select class="deposito" name="deposito[]" onchange="carregarLocais(this)">
+                        <select class="deposito" required name="deposito[]" onchange="carregarLocais(this)">
                             <option value="" disabled selected>Selecione um Depósito</option>
                             <option value="1">Infra.</option>
                             <option value="2">Zeld.</option>
@@ -44,8 +44,8 @@
 
                     <div class="form-group">
                         <label for="local">Local:</label>
-                        <select class="local" name="local[]" onchange="verificarSaldo()">
-                            <option value="" disabled selected>Selecione um Local</option>
+                        <select class="local" required name="local[]" onchange="verificarSaldo()">
+                            <option value=""  disabled selected>Selecione um Local</option>
                         </select>
                     </div>
 
@@ -126,7 +126,7 @@
             const saldoAlocar = parseInt(document.getElementById('saldo_alocar').value);
 
             if (totalAlocado > saldoAlocar) {
-                alert("O saldo alocado não pode ser maior que o saldo disponível!");
+                alert("O saldo alocado não pode ser maior que o saldo para alocar!");
                 document.querySelectorAll('.saldo').forEach(input => {
                     input.value = ""; 
                 });
