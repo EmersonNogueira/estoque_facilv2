@@ -124,6 +124,16 @@
 				
 			}
 		}
+
+
+		public function setValorUnitario(){
+			$item = $_POST;
+			$codigo_item = $item["codigo_item"];
+			$valor_unitario = $item["valor_unitario"];
+
+			$this->model->setValorUnitario($codigo_item,$valor_unitario);
+
+		}
 				
 	}
 ?>

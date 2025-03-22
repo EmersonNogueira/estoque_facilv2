@@ -69,6 +69,8 @@
             <p><strong>Descrição do Pregão:</strong> <?php echo $pregao; ?></p>
             <p><strong>Unidade de Medida:</strong> <?php echo $unidadeMedida; ?></p>
 
+            
+
             <div class="card-buttons">
                 <form method="POST" action="<?php echo $base_url; ?>Item/alocar">
                     <input type="hidden" name="codigo_item" value="<?php echo $codigo; ?>">
@@ -78,9 +80,15 @@
 
                     <button type="submit" class="btn-register">Alocar produto</button>
                 </form>
-                <form method="POST" action="<?php echo $base_url; ?>Produto/mveditar">
+                <form method="POST" action="<?php echo $base_url; ?>Registro/viewcompra">
                     <input type="hidden" name="codigo_item" value="<?php echo $codigo; ?>">
-                    <button type="submit" class="btn-edit">EDITAR PRODUTO</button>
+                    <input type="hidden" name="situacao" value="<?php echo $situacao; ?>">
+                    <input type="hidden" name="descricao" value="<?php echo $descricao; ?>">
+
+                    <input type="hidden" name="custo_atual" value="<?php echo $custoUnitario; ?>">
+                    <input type="hidden" name="saldo_atual" value="<?php echo $saldo; ?>">
+
+                    <button type="submit" class="btn-edit">Registrar compra</button>
                 </form>
             </div>
         </div>

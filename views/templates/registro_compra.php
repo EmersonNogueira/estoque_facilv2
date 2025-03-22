@@ -1,52 +1,26 @@
 <div class="add-product-container">
-    <h1>COMPRA / AJUSTES</h1>
-    <form action="<?php echo $base_url; ?>Registro/novoregistro" method="POST">
-
-        <!-- Tipo de Operação -->
-        <div class="form-group">
-            <label for="tipo_operacao">Tipo de Operação:</label>
-            <select id="tipo_operacao" name="tipo" required>
-                <option value="" disabled selected>Selecione o tipo</option>
-                <?php
-                // Verifica o tipo da sessão e ajusta as opções
-                if ($_SESSION['tipo'] === "infra") {
-                    echo '<option value="Compra">Compra</option>';
-                } elseif ($_SESSION['tipo'] === "admin") {
-                    echo '<option value="Compra">Compra</option>';
-                    echo '<option value="Ajuste Positivo">Ajuste Positivo</option>';
-                    echo '<option value="Ajuste Negativo">Ajuste Negativo</option>';
-                }
-                ?>
-            </select>
-        </div>
+    <h1>COMPRA DE ITEM</h1>
+    <?php var_dump($item)?>;
+    <form action="<?php echo $base_url; ?>Registro/registrarcompra" method="POST">
 
         <!-- Nome do Produto (não editável) -->
         <div class="form-group">
-            <label for="produto_nome">Nome do Produto:</label>
-            <input type="text" id="produto_nome" name="produto_nome" value="<?php echo htmlspecialchars($produto['nome']); ?>" readonly>
+            <label for="produto_nome">Descrição do item:</label>
+            <input type="text" id="produto_nome" name="descicao_item" value="<?php echo htmlspecialchars($item['descricao']); ?>" readonly>
         </div>
 
         <!-- Condição do Produto (não editável) -->
         <div class="form-group">
-            <label for="condicao_produto">Condição do Produto:</label>
-            <input type="text" id="condicao_produto" name="condicao_produto" value="<?php echo htmlspecialchars($produto['situacao']); ?>" readonly>
+            <label for="condicao_produto">Condição do Item:</label>
+            <input type="text" id="condicao_produto" name="situacao" value="<?php echo htmlspecialchars($item['situacao']); ?>" readonly>
         </div>
 
 
-
-        <!-- Saldo Atual (não editável) -->
-        <div class="form-group">
-            <label for="saldo_atual">Saldo Atual:</label>
-            <input type="number" id="saldo_atual" name="saldo_atual" value="<?php echo htmlspecialchars($produto['saldo']); ?>" readonly>
-        </div>
 
         <div class="form-group">
             <label for="custo">Valor unitário:</label>
-            <input type="text" id="custo_novo" name="custo_novo" value="<?php echo htmlspecialchars($produto['custo']); ?>" oninput="validarCusto(this)" >
+            <input type="text" id="custo_novo" name="custo_novo"  oninput="validarCusto(this)" >
         </div>
-
-
-
 
         <!-- Quantidade do Registro -->
         <div class="form-group">
@@ -63,15 +37,17 @@
 
         <!-- Data de Entrada -->
         <div class="form-group">
-            <label for="data_entrada">Data da Nota / Ajuste:</label>
+            <label for="data_entrada">Data da Nota:</label>
             <input class= "filter"type="date" id="data" name="data" required>
         </div>
 
 
 
         <!-- Campo oculto para o ID do Produto -->
-        <input type="hidden" id="produto_id" name="id_produto" value="<?php echo htmlspecialchars($produto['id_produto']); ?>">
-        <input type="hidden" id="custo_atual" name="custo_atual" value="<?php echo htmlspecialchars($produto['custo']); ?>">
+        <input type="hidden" id="produto_id" name="codigo_item" value="<?php echo htmlspecialchars($item['codigo_item']); ?>">
+        <input type="hidden" id="custo_atual" name="custo_atual" value="<?php echo htmlspecialchars($item['custo_atual']); ?>">
+        <input type="hidden" id="saldo_atual" name="saldo_atual" value="<?php echo htmlspecialchars($item['saldo_atual']); ?>">
+
 
         <!-- Botão de Envio -->
         <button type="submit" class="btn-submit">Registrar</button>
