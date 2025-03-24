@@ -87,6 +87,7 @@
 
                     <input type="hidden" name="custo_atual" value="<?php echo $custoUnitario; ?>">
                     <input type="hidden" name="saldo_atual" value="<?php echo $saldo; ?>">
+                    <input type="hidden" name="saldo_alocar" value="<?php echo $saldo_alocar; ?>">
 
                     <button type="submit" class="btn-edit">Registrar compra</button>
                 </form>

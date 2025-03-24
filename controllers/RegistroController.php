@@ -14,17 +14,18 @@
         public function registrarcompra(){
             $registro = $_POST;
             $saldo_final = $registro["saldo_atual"] + $registro["quantidade"];
+            $saldo_alocar = $registro["saldo_alocar"] + $registro["quantidade"];
 
             //var_dump($registro);
 
             //Verificar novo custo unitario
 
-            if ($registro["saldo_atual"] == 0) {
+            if (($registro["saldo_atual"] + $registro["saldo_alocar"] )== 0) {
                 // Se o saldo atual for zero, o novo custo é apenas o custo da nova compra
                 $custo = $registro["custo_novo"];
             } else {
                 // Se já houver estoque, calcular o novo custo médio ponderado
-                $valor_atual = $registro["custo_atual"] * $registro["saldo_atual"];
+                $valor_atual = $registro["custo_atual"] * ($registro["saldo_atual"] + $registro["saldo_alocar"]);
                 $valor_novo = $registro["custo_novo"] * $registro["quantidade"];
                 
                 if ($saldo_final > 0) {
@@ -34,9 +35,14 @@
                 }
             }
 
-
             //Atualizar novo custo unitário
+
+            $this->model->compra($registro["quantidade"],$registro["codigo_item"],$registro["numero_nota"],$registro["data"],$registro["custo_novo"]);
+
+            $this->model->setSaldo_alocar($registro["codigo_item"],$saldo_alocar);
+
             $this->model->setValorUnitario($registro["codigo_item"],$custo);
+
 
 
 

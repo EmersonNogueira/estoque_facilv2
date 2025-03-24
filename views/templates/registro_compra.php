@@ -47,6 +47,7 @@
         <input type="hidden" id="produto_id" name="codigo_item" value="<?php echo htmlspecialchars($item['codigo_item']); ?>">
         <input type="hidden" id="custo_atual" name="custo_atual" value="<?php echo htmlspecialchars($item['custo_atual']); ?>">
         <input type="hidden" id="saldo_atual" name="saldo_atual" value="<?php echo htmlspecialchars($item['saldo_atual']); ?>">
+        <input type="hidden" id="saldo_alocar" name="saldo_alocar" value="<?php echo htmlspecialchars($item['saldo_alocar']); ?>">
 
 
         <!-- Botão de Envio -->
