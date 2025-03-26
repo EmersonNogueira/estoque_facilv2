@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="add-product-container">
-        <h1>Cadastro de Novo Produto</h1>
+        <h1>Cadastro de Novo Item</h1>
         <form action="<?php echo $base_url; ?>item/item_adicionar" method="post">
             <div class="form-group">
                 <label for="nome">DESCRIÇÃO DO ITEM - REF - TAM - COR MARCA ou FABRICANTE:</label>

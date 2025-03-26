@@ -5,6 +5,67 @@
 	
 		protected $base_url;
 		
+		
+		public function __construct($view,$model){
+			$this->checkAccess();
+			parent::__construct($view,$model);
+			if (session_status() == PHP_SESSION_NONE) {
+				session_start();
+			}
+			
+
+		}
+
+		private function checkAccess() {
+			// Verifica se a sessão está iniciada
+			if (!isset($_SESSION['loggedin']) || !$_SESSION['loggedin']) {
+				// Usuário não está logado, redireciona para a página de login
+				header('Location: ' . $this->base_url . 'Login/login');
+				exit;
+			}
+			//header('Location: ' . $this->base_url . 'Login/login');
+
+			// Verifica o tipo de usuário
+			if (isset($_SESSION['tipo'])) {
+				if ($_SESSION['tipo'] === 'admin' || $_SESSION['tipo']=='infra') {
+					// Se o usuário for admin, permite o acesso
+					return;
+				} elseif ($_SESSION['tipo'] === 'solicitante') {
+					// Se o usuário for solicitante, permite o acesso à rota de solicitação de produto
+					if ($_SERVER['REQUEST_URI'] ===  $this->base_url.'Solicitacao/solicitacaoproduto') {
+						return; // Permite o acesso à rota de solicitante
+					} else {
+						// Redireciona para a página de solicitação de produtos se tentar acessar outra rota
+						header('Location:'. $this->base_url.'Solicitacao/solicitacaoproduto');
+						exit;
+					}
+				} else {
+					// Se não for admin nem solicitante, exibe uma mensagem de acesso negado
+					die('Acesso negado.');
+				}
+			} else {
+
+				// Caso o tipo de usuário não esteja definido, exibe uma mensagem de erro
+				die('Tipo de usuário não definido.');
+			}
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		public function index(){
 			try {

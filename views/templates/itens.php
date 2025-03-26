@@ -14,7 +14,7 @@
 </style>
 
 <div class="container">
-    <h1>Itens</h1>
+    <h1>Estoque</h1>
     <?php if (isset($_SESSION['mensagem_confirmacao'])): ?>
         <script type="text/javascript">
             window.onload = function() {
