@@ -14,7 +14,7 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="<?php echo $base_url; ?>styles.css?v=100.0">
+    <link rel="stylesheet" href="<?php echo $base_url; ?>styles.css?v=6.0">
     <title>ESTOQUE FÁCIL</title>
 </head>
 <body>

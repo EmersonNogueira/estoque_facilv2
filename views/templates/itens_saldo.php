@@ -1,3 +1,7 @@
+
+<style>
+
+</style>
 <div class="container">
     <h1>Itens</h1>
     <div class="top-bar">
@@ -53,7 +57,7 @@
             $custoItem = $custoUnitario * ($saldo + $saldo_alocar);
             $custoTotal += $custoItem; // Acumula o custo total
         ?>
-        <div class="card produto-item" 
+        <div class="card produto-item"
              data-nome="<?php echo strtolower($descricao); ?>" 
              data-categoria="<?php echo strtolower($categoria); ?>"
              data-situacao="<?php echo strtolower($situacao); ?>">
@@ -78,7 +82,7 @@
                     <input type="hidden" name="descricao" value="<?php echo $descricao; ?>">
                     <input type="hidden" name="situacao" value="<?php echo $situacao; ?>">
 
-                    <button type="submit" class="btn-register">Alocar produto</button>
+                    <button type="submit" class="btn-register">Alocar saldo</button>
                 </form>
                 <form method="POST" action="<?php echo $base_url; ?>Registro/viewcompra">
                     <input type="hidden" name="codigo_item" value="<?php echo $codigo; ?>">
@@ -89,7 +93,18 @@
                     <input type="hidden" name="saldo_atual" value="<?php echo $saldo; ?>">
                     <input type="hidden" name="saldo_alocar" value="<?php echo $saldo_alocar; ?>">
 
-                    <button type="submit" class="btn-edit">Registrar compra</button>
+                    <button type="submit" class="btn-register">Registrar Compra</button>
+                </form>
+                <form method="POST" action="<?php echo $base_url; ?>Item/item_editar">
+                    <input type="hidden" name="codigo_item" value="<?php echo $codigo; ?>">
+                    <input type="hidden" name="situacao" value="<?php echo $situacao; ?>">
+                    <input type="hidden" name="descricao" value="<?php echo $descricao; ?>">
+                    <input type="hidden" name="unidade_medida" value="<?php echo $unidadeMedida; ?>">
+                    <input type="hidden" name="categoria" value="<?php echo $categoria; ?>">
+
+                    <input type="hidden" name="pregao" value="<?php echo $pregao; ?>">
+
+                    <button type="submit" class="btn-register">Editar</button>
                 </form>
             </div>
         </div>
@@ -147,6 +162,7 @@ document.getElementById("categoria").addEventListener("change", filtrarProdutos)
 document.getElementById("situacao").addEventListener("change", filtrarProdutos);
 
 window.onload = calcularCustoTotal;
+
 
 </script>
 <?php if (isset($_SESSION['mensagem_confirmacao'])): ?>

@@ -18,7 +18,7 @@ main {
 /* Cabeçalho */
 /* Cabeçalho */
 header {
-    background-color: #0c710c;
+    background-color: #6d2380;
     padding: 8px;
     color: white;
     text-align: center;
@@ -81,7 +81,7 @@ nav a {
 nav .dropdown-menu {
     display: none;
     position: absolute;
-    background-color: #008000; /* Cor de fundo do submenu */
+    background-color:  #8536a3; /* Cor de fundo do submenu */
     padding: 10px;
     list-style: none;
     border-radius: 5px;
@@ -108,7 +108,7 @@ nav .dropdown-menu a {
 
 /* Estilo para o hover no item do dropdown */
 nav .dropdown-menu a:hover {
-    background-color: #6b8e23; /* Cor de fundo ao passar o mouse */
+    background-color: #9b3fbc; /* Cor de fundo ao passar o mouse */
 }
 
 /* Responsividade (apenas para dispositivos móveis) */
@@ -134,7 +134,7 @@ nav .dropdown-menu a:hover {
     }
 
     nav .dropdown-menu li a {
-        background-color: #008000; /* Mantém a cor de fundo */
+        background-color: #173d60; /* Mantém a cor de fundo */
         padding: 8px 10px; /* Adiciona padding */
         border-radius: 3px; /* Adiciona bordas arredondadas */
         display: block; /* Exibe como bloco */
@@ -243,6 +243,55 @@ th:nth-child(7), td:nth-child(7) {
     cursor: pointer; /* Muda o cursor para indicar que o card é clicável */
 }
 
+.card-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0px; /* Espaçamento entre os botões */
+    width: 100%;
+}
+
+.card-buttons form {
+    width: 100%;
+}
+
+.card-buttons button {
+    width: 100%;
+    padding: 2px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #723581; /* Cor do botão */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.card-buttons button:hover {
+    background-color: #571a66; /* Cor ao passar o mouse */
+}
+
+
+.btn-alocar {
+    width: 100%; /* Ocupa toda a largura do card */
+    padding: 10px; /* Ajuste do padding para um tamanho adequado */
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #6d2380; /* Cor do botão */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    gap: 2px;
+}
+
+.btn-alocar:hover {
+    background-color: #551a63; /* Tom mais escuro ao passar o mouse */
+}
+
 
 
 /* Estilos para botões */
@@ -258,16 +307,16 @@ th:nth-child(7), td:nth-child(7) {
 }
 
 .btn-devolucao {
-    background-color:#008000; /* Cor do botão */
+    background-color:#17605c; /* Cor do botão */
     color: white;
 }
 
 .btn-add-new:hover {
-    background-color: #99c257; /* Azul escuro */
+    background-color:#173d60; /* Azul escuro */
 }
 
 .btn-register, .btn-verprodutos {
-    background-color: #0c710c; /* Cor do botão */
+    background-color: #4a1760; /* Cor do botão */
     color: white;
 }
 

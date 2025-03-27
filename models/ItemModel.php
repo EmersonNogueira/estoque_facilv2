@@ -130,10 +130,33 @@
             }
         }
 
+        public function atualizar_item($item) {
+            $sql = "UPDATE itens 
+                    SET descricao = :descricao, 
+                        categoria = :categoria, 
+                        desc_pregao = :desc_pregao, 
+                        unidade_medida = :unidade_medida, 
+                        visivel = :visivel
+                    WHERE codigo_item = :codigo_item";
+        
+            $stmt = $this->pdo->prepare($sql);
+        
+            $stmt->bindParam(':descricao', $item['descricao'], \PDO::PARAM_STR);
+            $stmt->bindParam(':categoria', $item['categoria'], \PDO::PARAM_STR);
+            $stmt->bindParam(':desc_pregao', $item['pregao'], \PDO::PARAM_STR);
+            $stmt->bindParam(':unidade_medida', $item['unidade_medida'], \PDO::PARAM_STR);
+            $stmt->bindParam(':visivel', $item['visivel'], \PDO::PARAM_STR);
+            $stmt->bindParam(':codigo_item', $item['codigo_item'], \PDO::PARAM_INT);
+        
+            return $stmt->execute();
+        }
+        
+        
+
 
         public function item_adicionar($item) {
-            $sql = "INSERT INTO itens (descricao, situacao, saldo_alocar, custo_unitario, visivel, categoria) 
-                    VALUES (:descricao, :situacao, :saldo_alocar, :custo_unitario, :visivel, :categoria)";
+            $sql = "INSERT INTO itens (descricao, situacao, saldo_alocar, custo_unitario, visivel, categoria,desc_pregao,unidade_medida) 
+                    VALUES (:descricao, :situacao, :saldo_alocar, :custo_unitario, :visivel, :categoria, :desc_pregao, :unidade_medida)";
         
             $stmt = $this->pdo->prepare($sql);
             
@@ -142,6 +165,9 @@
             $stmt->bindParam(':saldo_alocar', $item['saldo_alocar'], \PDO::PARAM_INT); // Se for um número inteiro
             $stmt->bindParam(':custo_unitario', $item['custo_unitario'], \PDO::PARAM_STR); // Tratado como string (se for valor em dinheiro)
             $stmt->bindParam(':visivel', $item['visivel'],  \PDO::PARAM_STR);
+            $stmt->bindParam(':desc_pregao', $item['desc_pregao'],  \PDO::PARAM_STR);
+            $stmt->bindParam(':unidade_medida', $item['unidade_medida'],  \PDO::PARAM_STR);
+
             $stmt->bindParam(':categoria', $item['categoria'], \PDO::PARAM_STR);
             
         

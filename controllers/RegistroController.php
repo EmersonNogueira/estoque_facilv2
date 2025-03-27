@@ -5,7 +5,6 @@
 	
 		protected $base_url;
 
-
         public function viewcompra() {
             $item = $_POST; 
             $this->view->render("registro_compra.php",['item' => $item]);

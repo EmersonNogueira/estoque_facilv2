@@ -4,8 +4,7 @@
 	class ItemController extends Controller{
 	
 		protected $base_url;
-		
-		
+				
 		public function __construct($view,$model){
 			$this->checkAccess();
 			parent::__construct($view,$model);
@@ -50,23 +49,6 @@
 			}
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		public function index(){
 			try {
 				$itens = $this->model->itens_locais();
@@ -88,7 +70,23 @@
 				die("Erro ao carregar itens: " . $e->getMessage());
 			}
 		}
+
+		public function item_editar(){
+			$item = $_POST;
+			$this->view->render('item_editar.php', ['item' => $item]);
+
+
+		}
+
+		public function atualizar_item() {
+			$item = $_POST;
+			$this->model->atualizar_item($item);
+			header("Location: {$this->base_url}Item/itens_saldo");
+
+
+		}
 		
+
 
 
 		public function itens_saldo(){
@@ -150,8 +148,9 @@
 
 
 		public function alocar_itensbd() {
+
 			$itens = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-		
+			
 			foreach ($itens["local"] as $key => $codigo_local) {
 				$validade = !empty($itens["validade"][$key]) ? $itens["validade"][$key] : null;
 				$saldo = $itens["saldo"][$key] ?? 0;
@@ -176,14 +175,15 @@
 				if ($estoque_id) {
 					$saldo_alocar = $itens["saldo_alocar"] - $saldo;
 					$this->model->setSaldo_alocar($codigo_item, $saldo_alocar);
-					header("Location: {$this->base_url}Item/itens_saldo");
-					exit;
 				} else {
 					echo "Erro ao processar a alocação.";
 				}
 
 				
 			}
+			header("Location: {$this->base_url}Item/");
+			exit;
+		
 		}
 
 

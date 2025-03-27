@@ -61,8 +61,8 @@
                 </div>
             </div>
 
-            <button type="button" id="addAlocacaoBtn" onclick="adicionarAlocacao()">Adicionar Alocação</button>
-            <button type="submit" id="submitBtn" disabled>Alocar ITEM</button>
+            <button type="button" id="addAlocacaoBtn" onclick="adicionarAlocacao()" class="btn-alocar">Adicionar Alocação</button>
+            <button type="submit" id="submitBtn" class="btn-alocar" disabled>Alocar ITEM</button>
         </form>
     </div>
 

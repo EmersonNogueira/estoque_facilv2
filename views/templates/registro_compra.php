@@ -1,6 +1,5 @@
 <div class="add-product-container">
     <h1>COMPRA DE ITEM</h1>
-    <?php var_dump($item)?>;
     <form action="<?php echo $base_url; ?>Registro/registrarcompra" method="POST">
 
         <!-- Nome do Produto (não editável) -->
