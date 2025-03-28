@@ -12,17 +12,7 @@
         display: none;
     }
 </style>
-
-<div class="container">
     <h1>Estoque</h1>
-    <?php if (isset($_SESSION['mensagem_confirmacao'])): ?>
-        <script type="text/javascript">
-            window.onload = function() {
-                alert('<?php echo htmlspecialchars($_SESSION['mensagem_confirmacao']); ?>');
-            };
-        </script>
-        <?php unset($_SESSION['mensagem_confirmacao']); ?>
-    <?php endif; ?>
 
     <div class="top-bar">
         <div class="filters">
@@ -119,6 +109,9 @@
                 <p><strong>Saldo Total:</strong> <?php echo htmlspecialchars($produto['saldo_total']); ?></p>
                 <p><strong>Valor Unitário:</strong> R$<?php echo number_format(htmlspecialchars($produto['custo_unitario']), 2, ',', '.'); ?></p>
 
+
+
+ 
                 <!-- Área de saldos e validades inicialmente oculta -->
                 <div class="saldo-details" style="display: none;">
                     <strong>Validades e Saldos:</strong>
@@ -127,10 +120,19 @@
                             <li>Saldo: <?php echo htmlspecialchars($saldoInfo['saldo']); ?> | Validade: <?php echo htmlspecialchars($saldoInfo['validade']); ?></li>
                         <?php endforeach; ?>
                     </ul>
+                    <form method="POST" action="<?php echo $base_url; ?>Item/item_ajustar">
+                        <input type="hidden" name="codigo_item" value="<?php echo $codigo; ?>">
+                        <?php if (isset($_SESSION['tipo']) && $_SESSION['tipo'] === "admin"): ?>
+                            <button type="submit" class="btn-alocar">Realizar Ajuste</button>
+                        <?php endif; ?>
+                    </form>
+
                 </div>
             </div>
         <?php endforeach; ?>
     </div>
+    <div id="notificacao-container"></div>
+
 </div>
 
 <script>
@@ -184,4 +186,40 @@ function toggleDetails(card) {
 }
 
 window.onload = calcularCustoTotal;
+</script>
+
+
+<script>
+function mostrarNotificacao(mensagem, tipo = 'sucesso') {
+    const container = document.getElementById('notificacao-container');
+    const notificacao = document.createElement('div');
+    
+    notificacao.className = `notificacao ${tipo}`;
+    notificacao.textContent = mensagem;
+    
+    container.appendChild(notificacao);
+    
+    // Força o reflow para a animação funcionar
+    void notificacao.offsetWidth;
+    
+    notificacao.classList.add('visivel');
+    
+    // Remove a notificação após 5 segundos
+    setTimeout(() => {
+        notificacao.classList.remove('visivel');
+        setTimeout(() => {
+            container.removeChild(notificacao);
+        }, 300);
+    }, 5000);
+}
+
+// Modificação para garantir que a notificação apareça mesmo se houver outros eventos onload
+document.addEventListener('DOMContentLoaded', function() {
+    calcularCustoTotal();
+    
+    <?php if (isset($_SESSION['mensagem_confirmacao'])): ?>
+        mostrarNotificacao('<?php echo htmlspecialchars($_SESSION['mensagem_confirmacao']); ?>', 'sucesso');
+        <?php unset($_SESSION['mensagem_confirmacao']); ?>
+    <?php endif; ?>
+});
 </script>

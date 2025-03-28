@@ -50,7 +50,7 @@
 
 
         <!-- Botão de Envio -->
-        <button type="submit" class="btn-submit">Registrar</button>
+        <button type="submit" class="btn-alocar">Registrar</button>
     </form>
 </div>
 

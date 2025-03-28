@@ -48,7 +48,7 @@
                 <option value="Não" <?php echo ($item['visivel'] == "Não") ? 'selected' : ''; ?>>Não</option>
             </select>
         </div>
-        <button type="submit" class="btn-submit">Salvar Alterações</button>
+        <button type="submit" class="btn-alocar">Salvar Alterações</button>
     </form>
 </div>
 

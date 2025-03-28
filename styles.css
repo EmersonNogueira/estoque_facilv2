@@ -272,10 +272,15 @@ th:nth-child(7), td:nth-child(7) {
     background-color: #571a66; /* Cor ao passar o mouse */
 }
 
-
+.btn-alocar:disabled {
+    background-color: #6c757d; /* Cinza */
+    color: #e9ecef;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
 .btn-alocar {
     width: 100%; /* Ocupa toda a largura do card */
-    padding: 10px; /* Ajuste do padding para um tamanho adequado */
+    padding: 3px; /* Ajuste do padding para um tamanho adequado */
     text-align: center;
     font-size: 16px;
     font-weight: bold;
@@ -285,7 +290,7 @@ th:nth-child(7), td:nth-child(7) {
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s ease;
-    gap: 2px;
+    margin-bottom: 3px;
 }
 
 .btn-alocar:hover {
@@ -790,3 +795,35 @@ th:nth-child(7), td:nth-child(7) {
 }
 
 
+.notificacao {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transform: translateX(150%);
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    max-width: 350px;
+    opacity: 0;
+}
+
+.notificacao.visivel {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notificacao.sucesso {
+    background-color: #28a745;
+}
+
+.notificacao.erro {
+    background-color: #dc3545;
+}
+
+.notificacao.info {
+    background-color: #17a2b8;
+}

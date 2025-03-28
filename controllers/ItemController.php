@@ -81,6 +81,7 @@
 		public function atualizar_item() {
 			$item = $_POST;
 			$this->model->atualizar_item($item);
+			$_SESSION['mensagem_confirmacao'] = "Edição realizada com sucesso";
 			header("Location: {$this->base_url}Item/itens_saldo");
 
 
@@ -177,10 +178,11 @@
 					$this->model->setSaldo_alocar($codigo_item, $saldo_alocar);
 				} else {
 					echo "Erro ao processar a alocação.";
-				}
+				}			
 
-				
 			}
+			$_SESSION['mensagem_confirmacao'] = "Saldo alocado corretamente confira novo estoque";
+
 			header("Location: {$this->base_url}Item/");
 			exit;
 		

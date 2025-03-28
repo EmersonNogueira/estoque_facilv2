@@ -14,7 +14,8 @@
             try {
                 $registro = $_POST;
 
-                $saldoFinal = $registro["saldo_atual"] + $registro["quantidade"];
+                
+                $saldoFinal = $registro["saldo_atual"] + $registro["quantidade"] + $registro["saldo_alocar"];
                 $saldoAlocar = $registro["saldo_alocar"] + $registro["quantidade"];
 
                 // Cálculo do novo custo unitário
@@ -24,7 +25,7 @@
                 } else {
                     $valorAtual = $registro["custo_atual"] * $saldoTotal;
                     $valorNovo = $registro["custo_novo"] * $registro["quantidade"];
-                    $custo = ($saldoFinal > 0) ? ($valorAtual + $valorNovo) / $saldoFinal : $registro["custo_novo"];
+                    $custo = ($valorAtual + $valorNovo) / $saldoFinal;
                 }
 
                 // Registrar compra e atualizar estoque apenas se a compra for bem-sucedida
@@ -40,8 +41,11 @@
                 } else {
                     throw new Exception("Erro ao registrar compra no banco de dados.");
                 }
+                $_SESSION['mensagem_confirmacao'] = "Registro de compra efetuado com sucesso saldo já está diponivel para alocar no estoque";
+
 
                 // Redirecionamento após sucesso
+
                 header("Location: {$this->base_url}Item/itens_saldo");
                 exit;
 
@@ -52,8 +56,9 @@
                 // Exibir mensagem amigável para o usuário (opcional, dependendo do ambiente)
                 echo "<p>Ocorreu um erro ao registrar a compra. Por favor, tente novamente.</p>";
             }
+                   
         }
-
+     
     }
 
 ?>

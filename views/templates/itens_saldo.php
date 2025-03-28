@@ -110,6 +110,9 @@
         </div>
         <?php endforeach; ?>
     </div>
+    <!-- Adicione isto no final do seu HTML, antes de fechar o body -->
+    <div id="notificacao-container"></div>
+
 </div>
 
 
@@ -165,11 +168,38 @@ window.onload = calcularCustoTotal;
 
 
 </script>
-<?php if (isset($_SESSION['mensagem_confirmacao'])): ?>
-        <script type="text/javascript">
-            window.onload = function() {
-                alert('<?php echo htmlspecialchars($_SESSION['mensagem_confirmacao']); ?>');
-            };
-        </script>
+
+<script>
+function mostrarNotificacao(mensagem, tipo = 'sucesso') {
+    const container = document.getElementById('notificacao-container');
+    const notificacao = document.createElement('div');
+    
+    notificacao.className = `notificacao ${tipo}`;
+    notificacao.textContent = mensagem;
+    
+    container.appendChild(notificacao);
+    
+    // Força o reflow para a animação funcionar
+    void notificacao.offsetWidth;
+    
+    notificacao.classList.add('visivel');
+    
+    // Remove a notificação após 5 segundos
+    setTimeout(() => {
+        notificacao.classList.remove('visivel');
+        setTimeout(() => {
+            container.removeChild(notificacao);
+        }, 300);
+    }, 5000);
+}
+
+// Modificação para garantir que a notificação apareça mesmo se houver outros eventos onload
+document.addEventListener('DOMContentLoaded', function() {
+    calcularCustoTotal();
+    
+    <?php if (isset($_SESSION['mensagem_confirmacao'])): ?>
+        mostrarNotificacao('<?php echo htmlspecialchars($_SESSION['mensagem_confirmacao']); ?>', 'sucesso');
         <?php unset($_SESSION['mensagem_confirmacao']); ?>
-<?php endif; ?>
+    <?php endif; ?>
+});
+</script>
