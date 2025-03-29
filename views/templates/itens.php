@@ -75,18 +75,23 @@
                     'situacao' => $row['situacao'],
                     'custo_unitario' => $row['custo_unitario'],
                     'saldos' => [],
-                    'saldo_total' => 0
+                    'saldo_total' => 0,
+                    'ids' => [] // Adicionamos um array para armazenar os IDs
                 ];
             }
 
-            // Adiciona saldo e validade ao agrupamento
+            // Adiciona saldo, validade e ID ao agrupamento
             $produtosAgrupados[$key]['saldos'][] = [
                 'saldo' => $row['saldo'],
-                'validade' => !empty($row['validade']) ? date('d/m/Y', strtotime($row['validade'])) : 'Sem validade'
+                'validade' => !empty($row['validade']) ? date('d/m/Y', strtotime($row['validade'])) : 'Sem validade',
+                'id' => $row['id'] // Adicionamos o ID aqui
             ];
 
             // Acumula o saldo total
             $produtosAgrupados[$key]['saldo_total'] += $row['saldo'];
+            
+            // Adiciona o ID ao array de IDs
+            $produtosAgrupados[$key]['ids'][] = $row['id'];
         }
 
         // Exibir os produtos agrupados
@@ -109,9 +114,6 @@
                 <p><strong>Saldo Total:</strong> <?php echo htmlspecialchars($produto['saldo_total']); ?></p>
                 <p><strong>Valor Unitário:</strong> R$<?php echo number_format(htmlspecialchars($produto['custo_unitario']), 2, ',', '.'); ?></p>
 
-
-
- 
                 <!-- Área de saldos e validades inicialmente oculta -->
                 <div class="saldo-details" style="display: none;">
                     <strong>Validades e Saldos:</strong>
@@ -120,13 +122,16 @@
                             <li>Saldo: <?php echo htmlspecialchars($saldoInfo['saldo']); ?> | Validade: <?php echo htmlspecialchars($saldoInfo['validade']); ?></li>
                         <?php endforeach; ?>
                     </ul>
-                    <form method="POST" action="<?php echo $base_url; ?>Item/item_ajustar">
-                        <input type="hidden" name="codigo_item" value="<?php echo $codigo; ?>">
+                    <form method="POST" action="<?php echo $base_url; ?>Item/ajuste_estoque">
+                        <!-- Adicionamos inputs hidden para cada ID -->
+                        <?php foreach ($produto['ids'] as $id): ?>
+                            <input type="hidden" name="ids[]" value="<?php echo htmlspecialchars($id); ?>">
+                        <?php endforeach; ?>
+                        
                         <?php if (isset($_SESSION['tipo']) && $_SESSION['tipo'] === "admin"): ?>
                             <button type="submit" class="btn-alocar">Realizar Ajuste</button>
                         <?php endif; ?>
                     </form>
-
                 </div>
             </div>
         <?php endforeach; ?>

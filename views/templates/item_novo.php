@@ -67,7 +67,7 @@
                 <label for="unidade_medida">Unidade de medida:</label>
                 <input type="text" id="unidade_medida" name="unidade_medida">
             </div>
-            <button type="submit" class="btn-submit">Cadastrar Item</button>
+            <button type="submit" class="btn-alocar">Cadastrar Item</button>
         </form>
     </div>
 

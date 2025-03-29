@@ -188,7 +188,19 @@
 		
 		}
 
+		public function ajuste_estoque() {
+			if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST)) {
+				$item = $_POST;
+				$estoque = $this->model->estoques($item);
 
+				$this->view->render('ajuste_estoque.php', ['estoque' => $estoque]);
+			} else {
+				// Se não houver POST, redireciona ou exibe uma mensagem de erro
+				header('Location: /erro');
+				exit();
+			}
+		}
+		
 		public function setValorUnitario(){
 			$item = $_POST;
 			$codigo_item = $item["codigo_item"];
@@ -197,6 +209,8 @@
 			$this->model->setValorUnitario($codigo_item,$valor_unitario);
 
 		}
+
+
 				
 	}
 ?>

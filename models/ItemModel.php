@@ -25,6 +25,7 @@
                         l.nome_local,  -- Nome do local
                         l.codigo_deposito,  -- Código do depósito (relacionado à tabela depositos)
                         d.nome_deposito,  -- Nome do depósito
+                        e.id,
                         e.saldo, 
                         e.validade
                     FROM 
@@ -205,6 +206,57 @@
 
         
         }
+
+        public function estoques($item) {
+            try {
+                // Verifica se existem IDs no array
+                if (empty($item['ids']) || !is_array($item['ids'])) {
+                    return ['erro' => 'Nenhum ID fornecido ou formato inválido.'];
+                }
+        
+                // Converte os IDs para inteiros para evitar SQL Injection
+                $ids = array_map('intval', $item['ids']);
+        
+                // Gera placeholders para a query
+                $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        
+                // Monta a consulta SQL com junção entre estoques, itens, locais e depósitos
+                $sqlStr = "
+                    SELECT 
+                        e.*, 
+                        i.descricao, 
+                        l.nome_local, 
+                        l.codigo_deposito, 
+                        d.nome_deposito 
+                    FROM 
+                        estoques e 
+                    INNER JOIN 
+                        itens i ON e.codigo_item = i.codigo_item
+                    LEFT JOIN 
+                        locais l ON e.codigo_local = l.codigo_local
+                    LEFT JOIN 
+                        depositos d ON l.codigo_deposito = d.codigo_deposito
+                    WHERE 
+                        e.id IN ($placeholders)
+                ";
+        
+                // Prepara a consulta
+                $stmt = $this->pdo->prepare($sqlStr);
+        
+                // Executa a consulta passando os valores
+                $stmt->execute($ids);
+        
+                // Retorna os resultados
+                return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            } catch (\PDOException $e) {
+                // Registra o erro
+                error_log("Erro na consulta SQL: " . $e->getMessage());
+        
+                // Retorna um erro genérico
+                return ['erro' => 'Ocorreu um problema ao buscar os estoques. Tente novamente mais tarde.'];
+            }
+        }
+        
         
         
         public function inserirEstoque($codigo_item, $codigo_local, $validade, $saldo) {
