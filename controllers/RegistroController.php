@@ -58,6 +58,11 @@
             }
                    
         }
+
+        public function novo_registro(){
+            $item = $_POST;
+            var_dump($item);
+        }
      
     }
 
