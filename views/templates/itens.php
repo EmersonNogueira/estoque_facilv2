@@ -83,7 +83,7 @@
             // Adiciona saldo, validade e ID ao agrupamento
             $produtosAgrupados[$key]['saldos'][] = [
                 'saldo' => $row['saldo'],
-                'validade' => !empty($row['validade']) ? date('d/m/Y', strtotime($row['validade'])) : 'Sem validade',
+                'validade' => !empty($row['validade']) ? date('d/m/Y', strtotime($row['validade'])) : '',
                 'id' => $row['id'] // Adicionamos o ID aqui
             ];
 
@@ -119,7 +119,7 @@
                     <strong>Validades e Saldos:</strong>
                     <ul>
                         <?php foreach ($produto['saldos'] as $saldoInfo): ?>
-                            <li>Saldo: <?php echo htmlspecialchars($saldoInfo['saldo']); ?> | Validade: <?php echo htmlspecialchars($saldoInfo['validade']); ?></li>
+                            <li>Saldo: <?php echo htmlspecialchars($saldoInfo['saldo']); ?> | Val: <?php echo htmlspecialchars($saldoInfo['validade']); ?></li>
                         <?php endforeach; ?>
                     </ul>
                     <form method="POST" action="<?php echo $base_url; ?>Item/ajuste_estoque">
@@ -129,9 +129,17 @@
                         <?php endforeach; ?>
                         
                         <?php if (isset($_SESSION['tipo']) && $_SESSION['tipo'] === "admin"): ?>
-                            <button type="submit" class="btn-alocar">Realizar Ajuste</button>
+                            <button type="submit" class="btn-alocar">Ajuste</button>
                         <?php endif; ?>
                     </form>
+
+                    <form method="POST" action="<?php echo $base_url; ?>Item/transferir">
+                        <?php foreach ($produto['ids'] as $id): ?>
+                                <input type="hidden" name="ids[]" value="<?php echo htmlspecialchars($id); ?>">
+                        <?php endforeach; ?>
+                        <button type="submit" class="btn-alocar">Transferir</button>
+                    </form>
+
                 </div>
             </div>
         <?php endforeach; ?>

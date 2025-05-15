@@ -20,7 +20,7 @@
 
     <div class="adjustment-forms-wrapper">
         <?php foreach ($estoque as $item): ?>
-        <form action="<?php echo $base_url; ?>Registro/novo_registro" method="POST" class="stock-adjustment-form">
+        <form action="<?php echo $base_url; ?>Registro/ajuste_estoque" method="POST" class="stock-adjustment-form">
             <div class="form-row">
                 <!-- Informações específicas do estoque -->
                 <div class="form-column stock-info">
@@ -69,6 +69,8 @@
 
             <!-- Campos ocultos -->
             <input type="hidden" name="id_estoque" value="<?php echo htmlspecialchars($item['id']); ?>">
+            <input type="hidden" name="custo_unitario" value="<?php echo htmlspecialchars($item['custo_unitario']); ?>">
+
             <input type="hidden" name="saldo_atual" value="<?php echo htmlspecialchars($item['saldo']); ?>">
             <input type="hidden" name="codigo_item" value="<?php echo htmlspecialchars($item['codigo_item']); ?>">
             <input type="hidden" name="codigo_local" value="<?php echo htmlspecialchars($item['codigo_local']); ?>">
@@ -106,6 +108,15 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    calcularCustoTotal();
+    
+    <?php if (isset($_SESSION['mensagem_confirmacao'])): ?>
+        mostrarNotificacao('<?php echo htmlspecialchars($_SESSION['mensagem_confirmacao']); ?>', 'sucesso');
+        <?php unset($_SESSION['mensagem_confirmacao']); ?>
+    <?php endif; ?>
 });
 </script>
 

@@ -1,7 +1,41 @@
 
 <style>
+.saldo-alocar-maior-que-zero {
+    background-color: #ffcccc !important; /* Vermelho claro */
+    border: 2px solid #ff0000; /* Borda vermelha */
+}
 
 </style>
+<!-- Botão para gerar PDF -->
+<button onclick="gerarPDF()" class="btn-register">Gerar PDF</button>
+
+<!-- Tabela oculta que será usada para gerar o PDF -->
+<table id="tabela-pdf" style="display: none;">
+    <thead>
+        <tr>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Saldo</th>
+            <th>Situação</th>
+            <th>Valor Unitário</th>
+            <th>Descrição do Pregão</th>
+            <th>Unidade de Medida</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($itens as $row): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($row['descricao']); ?></td>
+                <td><?php echo htmlspecialchars($row['categoria']); ?></td>
+                <td><?php echo isset($row['saldo_total']) ? intval($row['saldo_total']) : 0; ?></td>
+                <td><?php echo htmlspecialchars($row['situacao'] ?? 'N/A'); ?></td>
+                <td><?php echo isset($row['custo_unitario']) ? number_format($row['custo_unitario'], 2, ',', '.') : 'N/A'; ?></td>
+                <td><?php echo htmlspecialchars($row['desc_pregao'] ?? 'N/A'); ?></td>
+                <td><?php echo htmlspecialchars($row['unidade_medida'] ?? 'N/A'); ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
 <div class="container">
     <h1>Itens</h1>
     <div class="top-bar">
@@ -57,7 +91,7 @@
             $custoItem = $custoUnitario * ($saldo + $saldo_alocar);
             $custoTotal += $custoItem; // Acumula o custo total
         ?>
-        <div class="card produto-item"
+        <div class="card produto-item <?php echo ($saldo_alocar > 0) ? 'saldo-alocar-maior-que-zero' : ''; ?>" 
              data-nome="<?php echo strtolower($descricao); ?>" 
              data-categoria="<?php echo strtolower($categoria); ?>"
              data-situacao="<?php echo strtolower($situacao); ?>">
@@ -202,4 +236,45 @@ document.addEventListener('DOMContentLoaded', function() {
         <?php unset($_SESSION['mensagem_confirmacao']); ?>
     <?php endif; ?>
 });
+</script>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+function gerarPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.text("Lista de Itens", 14, 10);
+
+    const tabela = document.getElementById("tabela-pdf");
+    const dados = [];
+
+    // Percorre as linhas da tabela e adiciona os dados ao array
+    for (let i = 1; i < tabela.rows.length; i++) {
+        const linha = tabela.rows[i];
+        const descricao = linha.cells[0].innerText;
+        const categoria = linha.cells[1].innerText;
+        const saldo = linha.cells[2].innerText;
+        const situacao = linha.cells[3].innerText;
+        const valor_unitario = linha.cells[4].innerText;
+        const descricao_pregao = linha.cells[5].innerText;
+        const unidade_medida = linha.cells[6].innerText;
+
+        dados.push([descricao, categoria, saldo, situacao, valor_unitario, descricao_pregao, unidade_medida]);
+    }
+
+    doc.autoTable({
+        head: [['Descrição', 'Categoria', 'Saldo', 'Situação', 'Valor Unitário', 'Descrição do Pregão', 'Unidade de Medida']],
+        body: dados,
+        startY: 20,
+        theme: 'striped',
+        styles: { fontSize: 10, cellPadding: 2 }
+    });
+
+    doc.save('Lista_de_Itens.pdf');
+}
 </script>

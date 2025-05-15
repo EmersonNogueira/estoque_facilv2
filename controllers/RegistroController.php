@@ -59,10 +59,34 @@
                    
         }
 
-        public function novo_registro(){
+        public function ajuste_estoque(){
+            session_start(); // Inicia a sessão, caso ainda não tenha sido iniciada
+            
             $item = $_POST;
-            var_dump($item);
+            $tipo = $item['tipo'];
+            $quantidade = (int) $item['quantidade'];
+            $saldo_atual = (int) $item['saldo_atual'];
+            
+            if ($tipo === "Ajuste Negativo" && $saldo_atual < $quantidade) {
+                $_SESSION['mensagem_confirmacao'] = "Quantidade não pode ser maior que o saldo atual.";
+            } else {
+                // Calcula o novo saldo dependendo do tipo
+                $saldo_final = ($tipo === "Ajuste Negativo") ? $saldo_atual - $quantidade : $saldo_atual + $quantidade;
+                
+                // Atualiza o saldo no estoque
+                $this->model->set_saldoEstoque($item["id_estoque"], $saldo_final);
+                
+                // Registra o ajuste
+                $this->model->ajuste_registro($quantidade, $item["codigo_item"], $item["custo_unitario"], $tipo);
+                
+                $_SESSION['mensagem_confirmacao'] = "Ajuste realizado com sucesso. Verifique Novo saldo:";
+            }
+            
+            header("Location: {$this->base_url}Item/");
+            exit();
         }
+        
+        
      
     }
 

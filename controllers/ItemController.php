@@ -148,46 +148,20 @@
 		}
 
 
-		public function alocar_itensbd() {
+		public function transferir(){
+			if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST)) {
+				$item = $_POST;
+				$estoque = $this->model->estoques($item);
 
-			$itens = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-			
-			foreach ($itens["local"] as $key => $codigo_local) {
-				$validade = !empty($itens["validade"][$key]) ? $itens["validade"][$key] : null;
-				$saldo = $itens["saldo"][$key] ?? 0;
-		
-				if (!isset($itens["codigo_item"], $codigo_local, $saldo)) {
-					echo "Erro: Dados ausentes para alocação.";
-					continue;
-				}
-		
-				$codigo_item = $itens["codigo_item"];
-				$existe = $this->model->verificarEstoque($codigo_item, $codigo_local, $validade);
-
-				
-		
-				if ($existe === false) {
-					$estoque_id = $this->model->inserirEstoque($codigo_item, $codigo_local, $validade, $saldo);
-				} else {
-					$novoSaldo = $existe["saldo"] + $saldo;
-					$estoque_id = $this->model->setSaldo_estoque($existe["id"], $novoSaldo);
-				}
-		
-				if ($estoque_id) {
-					$saldo_alocar = $itens["saldo_alocar"] - $saldo;
-					$this->model->setSaldo_alocar($codigo_item, $saldo_alocar);
-				} else {
-					echo "Erro ao processar a alocação.";
-				}			
-
+				$this->view->render('transferir_itens.php', ['estoque' => $estoque]);
+			} else {
+				// Se não houver POST, redireciona ou exibe uma mensagem de erro
+				header('Location: /erro');
+				exit();
 			}
-			$_SESSION['mensagem_confirmacao'] = "Saldo alocado corretamente confira novo estoque";
-
-			header("Location: {$this->base_url}Item/");
-			exit;
-		
+				
+			
 		}
-
 		public function ajuste_estoque() {
 			if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST)) {
 				$item = $_POST;
@@ -200,6 +174,113 @@
 				exit();
 			}
 		}
+
+
+		public function alocar_itensbd() {
+			$itens = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+			$totalSaldoAlocado = 0;
+		
+			foreach ($itens["local"] as $key => $codigo_local) {
+				$validade = !empty($itens["validade"][$key]) ? $itens["validade"][$key] : null;
+				$saldo = $itens["saldo"][$key] ?? 0;
+				
+				if (!isset($itens["codigo_item"], $codigo_local, $saldo)) {
+					echo "Erro: Dados ausentes para alocação.";
+					continue;
+				}
+		
+				$codigo_item = $itens["codigo_item"];
+				$existe = $this->model->verificarEstoque($codigo_item, $codigo_local, $validade);
+		
+				if ($existe === false) {
+					$estoque_id = $this->model->inserirEstoque($codigo_item, $codigo_local, $validade, $saldo);
+				} else {
+					$novoSaldo = $existe["saldo"] + $saldo;
+					$estoque_id = $this->model->setSaldo_estoque($existe["id"], $novoSaldo);
+				}
+		
+				if ($estoque_id) {
+					$totalSaldoAlocado += $saldo;
+				} else {
+					echo "Erro ao processar a alocação.";
+				}
+			}
+		
+			// Atualiza saldo alocar apenas uma vez, fora do loop
+			if ($totalSaldoAlocado > 0) {
+				$saldo_alocar = $itens["saldo_alocar"] - $totalSaldoAlocado;
+				$this->model->setSaldo_alocar($itens["codigo_item"], $saldo_alocar);
+			}
+		
+			$_SESSION['mensagem_confirmacao'] = "Saldo alocado corretamente, confira novo estoque";
+			header("Location: {$this->base_url}Item/");
+			exit;
+		}
+
+		public function transferir_estoque() {
+			$itens = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+			$totalSaldoTransferido = 0;
+		
+			// Extrai os dados recebidos via POST
+			$quantidade = (int)$itens["quantidade"];
+			$codigo_item = (int)$itens["codigo_item"];
+			$saldo_atual = (int)$itens["saldo_atual"];
+			$id_estoque_origem = (int)$itens["id_estoque_origem"];
+			$validade_origem = !empty($itens["validade_origem"]) ? $itens["validade_origem"] : null;
+			$codigo_local_origem = (int)$itens["local_origem"];
+			$codigo_local_destino = (int)$itens["local_destino"];
+			$codigo_deposito_origem = (int)$itens["deposito_origem"];
+			$codigo_deposito_destino = (int)$itens["deposito_destino"];
+		
+			// Verifica se o saldo a transferir é maior que o saldo disponível
+			if ($quantidade > $saldo_atual) {
+				$_SESSION['mensagem_erro'] = "Erro: Saldo insuficiente para transferência.";
+				header("Location: {$this->base_url}Item/");
+				exit;
+			}
+		
+			// Verifica se já existe estoque no destino
+			$existe_destino = $this->model->verificarEstoque($codigo_item, $codigo_local_destino, $validade_origem);
+		
+			if ($existe_destino === false) {
+				// Cria novo estoque no destino
+				$estoque_id_destino = $this->model->inserirEstoque($codigo_item, $codigo_local_destino, $validade_origem, $quantidade);
+			} else {
+				// Atualiza saldo no estoque de destino
+				$novoSaldoDestino = $existe_destino["saldo"] + $quantidade;
+				$estoque_id_destino = $this->model->setSaldo_estoque($existe_destino["id"], $novoSaldoDestino);
+			}
+		
+			if ($estoque_id_destino) {
+				$totalSaldoTransferido += $quantidade;
+		
+				// Atualiza o saldo no estoque de origem
+				$novoSaldoOrigem = $saldo_atual - $quantidade;
+				if ($novoSaldoOrigem > 0) {
+					$this->model->setSaldo_estoque($id_estoque_origem, $novoSaldoOrigem);
+				} else {
+					// Deleta o estoque da origem se o saldo ficar zero
+					//$this->model->deletarEstoque($id_estoque_origem);
+				}
+			} else {
+				$_SESSION['mensagem_erro'] = "Erro ao processar a transferência.";
+				header("Location: {$this->base_url}Item/");
+				exit;
+			}
+		
+			if ($totalSaldoTransferido > 0) {
+				$_SESSION['mensagem_confirmacao'] = "Transferência realizada corretamente.";
+			} else {
+				$_SESSION['mensagem_erro'] = "Erro na transferência. Verifique os dados.";
+			}
+		
+			header("Location: {$this->base_url}Item/");
+			exit;
+		}
+		
+		
+
+
 		
 		public function setValorUnitario(){
 			$item = $_POST;

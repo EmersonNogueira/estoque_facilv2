@@ -67,6 +67,89 @@
         
             return $stmt->execute();
         }
+
+
+        public function set_saldoEstoque($id, $saldo){
+
+            
+            try {
+                // Inicia a transação
+                $this->pdo->beginTransaction();
+                
+                if ($saldo == 0) {
+                    // Se o saldo for zero, remove a linha correspondente
+                    $sql = "DELETE FROM estoques WHERE id = :id";
+                    $stmt = $this->pdo->prepare($sql);
+                    $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
+                } else {
+                    // Caso contrário, apenas atualiza o saldo
+                    $sql = "UPDATE estoques SET saldo = :saldo WHERE id = :id";
+                    $stmt = $this->pdo->prepare($sql);
+                    $stmt->bindParam(':saldo', $saldo, \PDO::PARAM_INT);
+                    $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
+                }
+                
+                $stmt->execute();
+                
+                // Confirma a transação
+                $this->pdo->commit();
+                
+                return true;
+            } catch (Exception $e) {
+                // Em caso de erro, desfaz a transação
+                $this->pdo->rollBack();
+                
+                // Registra o erro (pode ser alterado para log de sistema)
+                error_log("Erro ao atualizar saldo do estoque: " . $e->getMessage());
+                
+                return false;
+            }
+            
+        }
+
+        public function ajuste_registro($quantidade, $codigo_item, $custo_unitario,$tipo){
+            $data_registro = date("Y-m-d H:i:s");
+            $id_usuario = $_SESSION['id'] ?? null; // Garante que id_usuario pode ser NULL se não estiver definido
+        
+            try {
+                // Inicia a transação
+                $this->pdo->beginTransaction();
+        
+
+        
+                // Insere o registro na tabela registros
+                $sql = "INSERT INTO registros (tipo, quantidade, codigo_item, data_registro, custo, id_usuario) 
+                        VALUES (:tipo, :quantidade, :codigo_item, :data_registro, :custo, :id_usuario)";
+        
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->bindParam(':tipo', $tipo, \PDO::PARAM_STR);
+                $stmt->bindParam(':quantidade', $quantidade, \PDO::PARAM_INT);
+                $stmt->bindParam(':codigo_item', $codigo_item, \PDO::PARAM_INT);
+                $stmt->bindParam(':data_registro', $data_registro, \PDO::PARAM_STR);
+                $stmt->bindParam(':custo', $custo_unitario, \PDO::PARAM_STR);
+                $stmt->bindParam(':id_usuario', $id_usuario, $id_usuario ? \PDO::PARAM_INT : \PDO::PARAM_NULL);
+        
+                $stmt->execute();
+        
+                // Confirma a transação
+                $this->pdo->commit();
+        
+                return true;
+            } catch (Exception $e) {
+                // Em caso de erro, desfaz a transação
+                $this->pdo->rollBack();
+        
+                // Registra o erro na sessão para exibição na página
+                $_SESSION['mensagem_erro'] = "Erro ao registrar ajuste de estoque: " . $e->getMessage();
+        
+                // Exibe a mensagem de erro
+                echo "<pre>Erro: " . $e->getMessage() . "</pre>";
+        
+                return false;
+            }
+        }
+        
+        
         
         
         

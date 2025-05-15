@@ -2,6 +2,11 @@
 <html lang="pt-BR">
 <head>
     <?php
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Pragma: no-cache");
+        header("Expires: Sat, 1 Jan 2000 00:00:00 GMT");
+
+    
  		// Detecta o ambiente (localhost ou hospedagem)
         if ($_SERVER['HTTP_HOST'] == 'localhost') {
 		// Ambiente local
@@ -14,7 +19,7 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="<?php echo $base_url; ?>styles.css?v=12.0">
+    <link rel="stylesheet" href="<?php echo $base_url; ?>styles.css?v=14.0">
     <title>ESTOQUE FÁCIL</title>
 </head>
 <body>
@@ -65,10 +70,19 @@
 </header>
 
 
+
 <script>
-    // Script para o menu hambúrguer
-    document.getElementById('mobile-menu').addEventListener('click', function() {
+    document.addEventListener("DOMContentLoaded", function() {
+        const menuToggle = document.getElementById('mobile-menu');
         const navbar = document.getElementById('navbar');
-        navbar.classList.toggle('active');
+
+        if (menuToggle && navbar) {
+            menuToggle.addEventListener('click', function() {
+                navbar.classList.toggle('active');
+            });
+        } else {
+            console.log("Erro: Elemento não encontrado.");
+        }
     });
 </script>
+

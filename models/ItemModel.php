@@ -88,15 +88,22 @@
                         i.desc_pregao,
                         i.unidade_medida,
                         i.saldo_alocar, 
-                        SUM(e.saldo) AS saldo_total
+                        COALESCE(SUM(e.saldo), 0) AS saldo_total
                     FROM 
                         itens i
                     LEFT JOIN 
                         estoques e ON i.codigo_item = e.codigo_item
                     GROUP BY 
-                        i.codigo_item, i.descricao, i.situacao, i.visivel, i.custo_unitario, i.categoria
+                        i.codigo_item, i.descricao, i.situacao, i.visivel, i.custo_unitario, 
+                        i.categoria, i.desc_pregao, i.unidade_medida, i.saldo_alocar
                     ORDER BY 
-                        i.categoria ASC, i.descricao ASC;
+                        CASE 
+                            WHEN i.saldo_alocar > 0 THEN 0 
+                            ELSE 1 
+                        END, 
+                        i.categoria ASC, 
+                        i.descricao ASC;
+
                 ";
         
                 // Adiciona o filtro de busca, se houver
@@ -225,6 +232,7 @@
                     SELECT 
                         e.*, 
                         i.descricao, 
+                        i.custo_unitario,
                         l.nome_local, 
                         l.codigo_deposito, 
                         d.nome_deposito 
