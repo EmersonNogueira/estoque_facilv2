@@ -5,6 +5,16 @@
 	
 		protected $base_url;
 
+		public function index(){
+			try {
+				$registros = $this->model->reader();
+				$this->view->render('registro.php', ['registros' => $registros]);
+			} catch (\Exception $e) {
+				error_log("Erro ao carregar produtos: " . $e->getMessage());
+				die("Erro ao carregar produtos: " . $e->getMessage());
+			}
+		}        
+
         public function viewcompra() {
             $item = $_POST; 
             $this->view->render("registro_compra.php",['item' => $item]);
@@ -85,8 +95,93 @@
             header("Location: {$this->base_url}Item/");
             exit();
         }
+
+        public function entrada(){
+			try {
+				$registros = $this->model->entrada();
+				$this->view->render('registroentrada.php', ['registros' => $registros]);
+			} catch (\Exception $e) {
+				error_log("Erro ao carregar produtos: " . $e->getMessage());
+				die("Erro ao carregar produtos: " . $e->getMessage());
+			}
+		}
+
+        public function sinteticoentrada(){
+			try {
+				$registros = $this->model->sinteticoentrada();
+				$this->view->render('registrosinteticoentrada.php', ['registros' => $registros]);
+			} catch (\Exception $e) {
+				error_log("Erro ao carregar produtos: " . $e->getMessage());
+				die("Erro ao carregar produtos: " . $e->getMessage());
+			}
+		}
+
+
+        public function sintetico(){
+			try {
+				$registros = $this->model->sintetico();
+				$this->view->render('registrosintetico.php', ['registros' => $registros]);
+			} catch (\Exception $e) {
+				error_log("Erro ao carregar produtos: " . $e->getMessage());
+				die("Erro ao carregar produtos: " . $e->getMessage());
+			}
+		}
         
+        public function itens() {
+            $dados = $_POST;                  
+            $id_solicitacao = $dados['codigo_solicitacao'];
+            $numero_nota = null; 
+            $tipo = 'Solicitação';
+            $receptor = $dados['receptor'];
+
+
+
+            $data = isset($dados['data']) && !empty($dados['data']) 
+            ? $dados['data'] 
+            : date('Y-m-d H:i:s');
+
+            $estoque_ids = $dados['estoque']['id_estoque']; // array de ids
+            $estoque_saldos = $dados['estoque']['saldo'];   // array de saldos
+            foreach ($dados['produtos'] as $produto) {
+                $id = $produto['id'];
+                $quantidade = $produto['quantidade'];
+                $custo = $produto['custo'];
+                $saldo_final = $produto['saldo'] - $quantidade;                 
+                $this->model->novoregistro($tipo, $quantidade, $id, $id_solicitacao, $numero_nota, $custo, $saldo_final,$data);
+            }
+
+            foreach ($estoque_ids as $i => $id_estoque) {
+                // Quantidade que será retirada (ou ajustada)
+                $quantidade_solicitada = $estoque_saldos[$i] ?? 0;
+
+                // Buscar saldo atual do estoque no banco de dados
+                $saldo_atual = $this->model->getSaldoEstoque($id_estoque);
+
+                // Verifica se conseguiu obter o saldo (pode retornar false ou null se o ID não existir)
+                if ($saldo_atual === false || $saldo_atual === null) {
+                    // Você pode registrar um erro ou pular
+                    continue;
+                }
+
+                // Subtrai a quantidade retirada
+                $novoSaldo = $saldo_atual - $quantidade_solicitada;
+
+                // Atualiza o saldo no banco de dados
+                $this->model->set_saldoEstoque($id_estoque, $novoSaldo);
+            }
+
+
+
         
+            $this->model->setstatus($id_solicitacao);
+            $this->model->setreceptor($id_solicitacao,$receptor); 
+            $_SESSION['mensagem_confirmacao'] = "Registro(s) de saída efetuado com sucesso";
+            header('Location:'. $this->base_url.'Registro/index');
+
+        
+
+        }
+               
      
     }
 

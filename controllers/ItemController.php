@@ -257,10 +257,12 @@
 				// Atualiza o saldo no estoque de origem
 				$novoSaldoOrigem = $saldo_atual - $quantidade;
 				if ($novoSaldoOrigem > 0) {
+
 					$this->model->setSaldo_estoque($id_estoque_origem, $novoSaldoOrigem);
 				} else {
 					// Deleta o estoque da origem se o saldo ficar zero
-					//$this->model->deletarEstoque($id_estoque_origem);
+			
+					$this->model->deletarEstoque($id_estoque_origem);
 				}
 			} else {
 				$_SESSION['mensagem_erro'] = "Erro ao processar a transferência.";

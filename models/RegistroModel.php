@@ -5,6 +5,53 @@
     {
 
 
+        public function reader() {
+            try {
+                // Verifica se o parâmetro de busca está presente na URL
+                $search = isset($_GET['search']) ? $_GET['search'] : '';
+
+                // Prepara a consulta SQL com JOIN para obter a descrição do item, setor e nome do usuário
+                $sqlStr = "SELECT r.*, 
+                            i.descricao AS descricao_item, 
+                            s.setor, 
+                            s.subSetor, 
+                            u.nome AS nome_usuario
+                        FROM registros r
+                        JOIN itens i ON r.codigo_item = i.codigo_item
+                        LEFT JOIN solicitacoes s ON r.codigo_solicitacao = s.codigo_solicitacao
+                        LEFT JOIN usuario u ON r.id_usuario = u.id
+                        WHERE r.tipo IN ('Solicitação', 'Ajuste Negativo')";
+
+                // Adiciona a condição de busca se o parâmetro de pesquisa estiver presente
+                if (!empty($search)) {
+                    $sqlStr .= " AND i.descricao LIKE :search"; // Filtra pela descrição do item
+                }
+
+                // Ordena pelos registros mais recentes
+                $sqlStr .= " ORDER BY r.data_registro DESC"; 
+
+                // Prepara a consulta SQL
+                $sql = $this->pdo->prepare($sqlStr);
+
+                // Vincula o parâmetro de busca se necessário
+                if (!empty($search)) {
+                    $sql->bindValue(':search', '%' . $search . '%');
+                }
+
+                $sql->execute();
+                $resultados = $sql->fetchAll(\PDO::FETCH_ASSOC);
+                return $resultados;
+            } catch (\PDOException $e) {
+                error_log("Erro na consulta: " . $e->getMessage());
+                die("Erro na consulta: " . $e->getMessage());
+            }
+        }
+
+
+
+        
+
+
         public function setValorUnitario($codigo_item, $custo_unitario) {
             $sql = "UPDATE itens SET custo_unitario = :custo_unitario WHERE codigo_item = :codigo_item";
         
@@ -148,10 +195,205 @@
                 return false;
             }
         }
+
+        public function entrada() {
+            try {
+                // Verifica se o parâmetro de busca está presente na URL
+                $search = isset($_GET['search']) ? $_GET['search'] : '';
+
+                // Prepara a consulta SQL com JOIN para obter o nome do item e as informações da tabela usuario
+                $sqlStr = "SELECT r.*, i.descricao AS descricao_item, u.nome AS nome_usuario
+                        FROM registros r
+                        JOIN itens i ON r.codigo_item = i.codigo_item
+                        JOIN usuario u ON r.id_usuario = u.id
+                        WHERE r.tipo IN ('Compra', 'Devolução', 'Ajuste Positivo')"; // Filtra registros do tipo compra, devolução ou ajuste positivo
+
+                // Adiciona a condição de busca se o parâmetro de pesquisa estiver presente
+                if (!empty($search)) {
+                    $sqlStr .= " AND i.descricao LIKE :search"; // Filtra pelo nome do item
+                }
+
+                // Ordena pelos registros mais recentes
+                $sqlStr .= " ORDER BY r.data_registro DESC"; // Ordena pelos registros mais recentes
+
+                // Prepara a consulta SQL
+                $sql = $this->pdo->prepare($sqlStr);
+
+                // Vincula o parâmetro de busca se necessário
+                if (!empty($search)) {
+                    $sql->bindValue(':search', '%' . $search . '%'); // Utiliza o operador LIKE para pesquisar em qualquer parte do nome
+                }
+
+                $sql->execute();
+                $resultados = $sql->fetchAll(\PDO::FETCH_ASSOC);
+                return $resultados;
+            } catch (\PDOException $e) {
+                error_log("Erro na consulta: " . $e->getMessage());
+                die("Erro na consulta: " . $e->getMessage());
+            }
+        }
+
+        
+
+        public function sinteticoentrada(){
+            try {
+                // Prepara a consulta SQL com JOIN para obter o nome do produto, setor e nome do usuário
+                $sqlStr = "SELECT r.*, 
+                                i.descricao AS descricao_item
+                            FROM registros r
+                            JOIN itens i ON r.codigo_item = i.codigo_item
+                            WHERE r.tipo IN ('Compra', 'Ajuste Positivo')";
+
+                
+                // Ordena pelos registros mais recentes
+                $sqlStr .= " ORDER BY r.data_registro DESC"; // Ordena pelos registros mais recentes
+                
+                // Log da consulta SQL para depuração
+                error_log("Consulta SQL: " . $sqlStr);
+                
+                // Prepara a consulta SQL
+                $sql = $this->pdo->prepare($sqlStr);
+                
+                // Executa a consulta
+                $sql->execute();
+                
+                // Verifica se há resultados
+                $resultados = $sql->fetchAll(\PDO::FETCH_ASSOC);
+                
+                // Loga os resultados para depuração
+                error_log("Resultados: " . print_r($resultados, true));
+                
+                // Se não houver resultados, retorna uma mensagem apropriada
+                if (empty($resultados)) {
+                    return ['message' => 'Nenhum registro encontrado.'];
+                }
+                
+                return $resultados;
+            
+            } catch (\PDOException $e) {
+                // Loga o erro para análise posterior
+                error_log("Erro na consulta: " . $e->getMessage());
+                
+                // Retorna uma mensagem de erro genérica sem expor detalhes da exceção ao usuário
+                return ['error' => 'Erro ao processar a consulta, tente novamente mais tarde.'];
+            }
+        }
         
         
         
+        public function sintetico() {
+            try {
+                // Prepara a consulta SQL com JOIN para obter a descrição do item, setor e nome do usuário
+                $sqlStr = "SELECT r.*, 
+                            s.setor,
+                            s.subSetor,
+                            i.descricao AS descricao_item
+                        FROM registros r
+                        LEFT JOIN solicitacoes s ON r.codigo_solicitacao = s.codigo_solicitacao
+                        JOIN itens i ON r.codigo_item = i.codigo_item
+                        WHERE r.tipo IN ('Solicitação', 'Ajuste Negativo')";
+                
+                // Ordena pelos registros mais recentes
+                $sqlStr .= " ORDER BY r.data_registro DESC"; // Ordena pelos registros mais recentes
+                
+                // Log da consulta SQL para depuração
+                error_log("Consulta SQL: " . $sqlStr);
+                
+                // Prepara a consulta SQL
+                $sql = $this->pdo->prepare($sqlStr);
+                
+                // Executa a consulta
+                $sql->execute();
+                
+                // Verifica se há resultados
+                $resultados = $sql->fetchAll(\PDO::FETCH_ASSOC);
+                
+                // Loga os resultados para depuração
+                error_log("Resultados: " . print_r($resultados, true));
+                
+                // Se não houver resultados, retorna uma mensagem apropriada
+                if (empty($resultados)) {
+                    return ['message' => 'Nenhum registro encontrado.'];
+                }
+                
+                return $resultados;
+                
+            } catch (\PDOException $e) {
+                // Loga o erro para análise posterior
+                error_log("Erro na consulta: " . $e->getMessage());
+                
+                // Retorna uma mensagem de erro genérica sem expor detalhes da exceção ao usuário
+                return ['error' => 'Erro ao processar a consulta, tente novamente mais tarde.'];
+            }
+        }
+
+        public function novoregistro($tipo, $quantidade, $id_produto, $id_solicitacao, $numero_nota, $custo, $saldo, $data) {
+
+            $id_usuario = $_SESSION['id'] ?? null;
+
+            $sql = "INSERT INTO registros (tipo, quantidade, codigo_item, codigo_solicitacao, numero_nota, data_registro, custo, id_usuario)
+                    VALUES (:tipo, :quantidade, :id_produto, :id_solicitacao, :numero_nota, :data_registro, :custo, :id_usuario)";
+
+            $stmt = $this->pdo->prepare($sql);
+
+            $stmt->bindParam(':tipo', $tipo);
+            $stmt->bindParam(':quantidade', $quantidade);
+            $stmt->bindParam(':id_produto', $id_produto);
+            $stmt->bindParam(':id_solicitacao', $id_solicitacao);
+            $stmt->bindParam(':numero_nota', $numero_nota);
+            $stmt->bindParam(':data_registro', $data);
+            $stmt->bindParam(':custo', $custo);
+            $stmt->bindParam(':id_usuario', $id_usuario, \PDO::PARAM_INT);
+
+
+
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                $erro = $stmt->errorInfo();
+                echo "Erro SQL: " . $erro[2]; // Mostra a mensagem de erro do banco
+                return false;
+            }
+        }
         
+        
+        public function getSaldoEstoque($id) {
+            $sql = "SELECT saldo FROM estoques WHERE id = :id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
+
+            $stmt->execute();
+            return $stmt->fetchColumn(); // retorna o valor da coluna "saldo"
+        }
+
+        public function setstatus($id_solicitacao) {
+            $status = 'Concluída'; // Definindo o valor do status como uma variável
+            $stmt = $this->pdo->prepare("
+                UPDATE solicitacoes SET 
+                    status = :status
+                WHERE codigo_solicitacao = :id_solicitacao
+            ");
+            
+            $stmt->bindParam(':status', $status, \PDO::PARAM_STR);
+            $stmt->bindParam(':id_solicitacao', $id_solicitacao, \PDO::PARAM_INT);
+        
+            return $stmt->execute();     
+        }
+        
+        public function setreceptor($id_solicitacao,$receptor){
+            $sql = "UPDATE solicitacoes SET receptor = :receptor WHERE codigo_solicitacao = :id_solicitacao";
+            $stmt = $this->pdo->prepare($sql);
+
+            $stmt->bindParam(':id_solicitacao', $id_solicitacao, \PDO::PARAM_INT);
+            $stmt->bindParam(':receptor', $receptor);
+
+            
+
+            return $stmt->execute();     
+
+        }        
+
+          
         
     }
 ?>

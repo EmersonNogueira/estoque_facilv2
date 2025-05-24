@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Estoque Fácil</title>
-    <link rel="stylesheet" href="<?php echo $base_url; ?>stylelogin.css?v=6.0">
+    <link rel="stylesheet" href="<?php echo $base_url; ?>stylelogin.css?v=<?php echo time(); ?>">
 </head>
 <?php if (isset($_SESSION['mensagem_confirmacao'])): ?>
     <script type="text/javascript">

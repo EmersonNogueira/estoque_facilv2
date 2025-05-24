@@ -14,10 +14,10 @@ class Model
     }
 
     private function connect() {
-        $host = 'sql311.infinityfree.com'; // Nome do host MySQL fornecido
-        $dbName = 'if0_37323896_estoqueidmccbj'; // Nome do banco de dados fornecido
-        $username = 'if0_37323896'; // Nome do usuário MySQL fornecido
-        $password = 'Belinha2002'; // Senha MySQL fornecida
+        $host = 'localhost'; // Nome do host MySQL fornecido
+        $dbName = 'u471146656_estoque'; // Nome do banco de dados fornecido
+        $username = 'u471146656_user_estoque'; // Nome do usuário MySQL fornecido
+        $password = 'Estoque@ccbj400'; // Senha MySQL fornecida
 
         try {
             $this->pdo = new PDO("mysql:host=$host;dbname=$dbName;charset=utf8mb4", $username, $password);

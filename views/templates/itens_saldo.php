@@ -6,8 +6,7 @@
 }
 
 </style>
-<!-- Botão para gerar PDF -->
-<button onclick="gerarPDF()" class="btn-register">Gerar PDF</button>
+
 
 <!-- Tabela oculta que será usada para gerar o PDF -->
 <table id="tabela-pdf" style="display: none;">
@@ -36,9 +35,12 @@
         <?php endforeach; ?>
     </tbody>
 </table>
+
 <div class="container">
+
     <h1>Itens</h1>
     <div class="top-bar">
+
         <div class="filters">
             <input type="search" name="search" id="search-input" placeholder="Descrição do item" class="search-input" oninput="filtrarProdutos()">
             
@@ -66,7 +68,8 @@
             </select>
         </div>
     </div>
-    
+        <!-- Botão para gerar PDF -->
+        <button onclick="gerarPDF()" class="btn-register">Gerar PDF</button>
     <div class="total-cost">
         <strong>Valor Total:</strong> R$<span id="custo-total">0.00</span>
     </div>
@@ -248,23 +251,42 @@ function gerarPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    doc.text("Lista de Itens", 14, 10);
+    doc.text("Lista de Itens Filtrados", 14, 10);
 
+    // Obter os filtros atuais
+    const categoriaFiltro = document.getElementById("categoria").value.toLowerCase();
+    const situacaoFiltro = document.getElementById("situacao").value.toLowerCase();
+    
     const tabela = document.getElementById("tabela-pdf");
     const dados = [];
 
-    // Percorre as linhas da tabela e adiciona os dados ao array
+    // Percorre as linhas da tabela e filtra conforme os mesmos critérios da tela
     for (let i = 1; i < tabela.rows.length; i++) {
         const linha = tabela.rows[i];
-        const descricao = linha.cells[0].innerText;
-        const categoria = linha.cells[1].innerText;
-        const saldo = linha.cells[2].innerText;
-        const situacao = linha.cells[3].innerText;
-        const valor_unitario = linha.cells[4].innerText;
-        const descricao_pregao = linha.cells[5].innerText;
-        const unidade_medida = linha.cells[6].innerText;
+        const categoria = linha.cells[1].textContent.toLowerCase();
+        const situacao = linha.cells[3].textContent.toLowerCase();
+        
+        // Aplica os mesmos filtros que estão na tela
+        const categoriaMatch = categoriaFiltro === "" || categoria === categoriaFiltro;
+        const situacaoMatch = situacaoFiltro === "" || situacao === situacaoFiltro;
+        
+        if (categoriaMatch && situacaoMatch) {
+            const descricao = linha.cells[0].textContent;
+            const saldo = linha.cells[2].textContent;
+            const valor_unitario = linha.cells[4].textContent;
+            const descricao_pregao = linha.cells[5].textContent;
+            const unidade_medida = linha.cells[6].textContent;
 
-        dados.push([descricao, categoria, saldo, situacao, valor_unitario, descricao_pregao, unidade_medida]);
+            dados.push([
+                descricao, 
+                linha.cells[1].textContent, // Categoria
+                saldo, 
+                linha.cells[3].textContent, // Situação
+                valor_unitario, 
+                descricao_pregao, 
+                unidade_medida
+            ]);
+        }
     }
 
     doc.autoTable({
@@ -275,6 +297,6 @@ function gerarPDF() {
         styles: { fontSize: 10, cellPadding: 2 }
     });
 
-    doc.save('Lista_de_Itens.pdf');
+    doc.save('Lista_de_Itens_Filtrados.pdf');
 }
 </script>

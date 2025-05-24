@@ -37,7 +37,7 @@ body {
 /* Header */
 .header h1 {
     font-size: 28px;
-    color:#008000;
+    color:#5c0080;
     margin-bottom: 5px;
 }
 
@@ -79,7 +79,7 @@ input[type="password"]::placeholder {
 button[type="submit"] {
     width: 100%;
     padding: 12px;
-    background-color: #008000;
+    background-color: #4d0080;
     border: none;
     border-radius: 5px;
     color: #ffffff;
@@ -89,12 +89,12 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #99c257;
+    background-color: #b957c2;
     transform: translateY(-2px);
 }
 
 button[type="submit"]:active {
-    background-color: #99c257;
+    background-color: #6757c2;
 }
 
 /* Error Message */

@@ -356,6 +356,26 @@
                 error_log("Erro: " . $e->getMessage()); // Log do erro
                 echo "Erro: " . $e->getMessage();
                 return false;
+
+            }
+        }
+
+        public function deletarEstoque($id_estoque_origem) {
+            try {
+                $sql = "DELETE FROM estoques WHERE id = :id";
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->bindParam(':id', $id_estoque_origem, \PDO::PARAM_INT);
+
+                if ($stmt->execute()) {
+                    return true;
+                } else {
+                    $errorInfo = $stmt->errorInfo();
+                    throw new Exception("Erro ao executar a exclusão SQL: " . implode(", ", $errorInfo));
+                }
+            } catch (Exception $e) {
+                error_log("Erro: " . $e->getMessage());
+                echo "Erro: " . $e->getMessage();
+                return false;
             }
         }
 

@@ -67,11 +67,20 @@
     </div>
 
     <script>
+
+        let base_url = '';
+
+        if (window.location.hostname === 'localhost') {
+            base_url = window.location.origin + '/estoque_facil/';
+        } else {
+            base_url = window.location.origin + '/';
+        }
+
         function carregarLocais(selectDeposito) {
             const selectLocal = selectDeposito.parentNode.nextElementSibling.querySelector('.local');
             selectLocal.innerHTML = '<option value="" disabled selected>Selecione um Local</option>';
 
-            fetch(`http://localhost/estoque_facil/Local/locais_depositos`)
+                fetch(base_url + 'Local/locais_depositos')
                 .then(response => response.json())
                 .then(data => {
                     const locaisFiltrados = data.filter(item => item.codigo_deposito == selectDeposito.value);
