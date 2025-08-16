@@ -53,10 +53,11 @@
                     $prod = htmlspecialchars($row['descricao_item']);
                     $numero_nota = htmlspecialchars($row['numero_nota']);
                     $id_solicitacao = htmlspecialchars($row['codigo_solicitacao']);
+                    $tipo_compra = htmlspecialchars($row['tipo_compra']);
+                    
                     $data_registro = htmlspecialchars($row['data_registro']);
                     $custo = htmlspecialchars($row['custo']);
-                    $data_formatada = date("d/m/Y", strtotime($data_registro));
-                    $usuario = htmlspecialchars($row['nome_usuario']);
+                    $data_formatada = date("d/m/Y H:i:s", strtotime($data_registro));                    $usuario = htmlspecialchars($row['nome_usuario']);
                 ?>
                 <!-- Adicionamos o atributo data-id-solicitacao para possibilitar o filtro -->
                 <div class="card" 
@@ -71,9 +72,10 @@
                     <p><strong>Código do item:</strong> <?php echo $id_produto; ?></p>
                     <p><strong>Descrição do item:</strong> <?php echo $prod; ?></p>
                     <p><strong>Quantidade:</strong> <?php echo $quantidade; ?></p>
+                    <p><strong>Tipo de Compra:</strong> <?php echo $tipo_compra; ?></p>
                     <p><strong>Número da Nota:</strong> <?php echo $numero_nota; ?></p>
                     <p><strong>Custo:</strong> R$ <?php echo $custo; ?></p>
-                    <p><strong>Data Registro:</strong> <?php echo $data_formatada; ?></p>
+                    <p><strong>Data e hora do registro Registro:</strong> <?php echo $data_formatada; ?></p>
                     <p><strong>Realizado por:</strong> <?php echo $usuario; ?></p>
                 </div>
             <?php endforeach; ?>

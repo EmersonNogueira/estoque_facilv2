@@ -10,19 +10,22 @@ class Model
     protected $pdo;
 
     public function __construct() {
+
+        date_default_timezone_set('America/Sao_Paulo');
         $this->connect();
     }
 
     private function connect() {
         $host = 'localhost'; // Nome do host MySQL fornecido
-        $dbName = 'u471146656_estoque'; // Nome do banco de dados fornecido
-        $username = 'u471146656_user_estoque'; // Nome do usuário MySQL fornecido
+        $dbName = 'u471146656_estoqueccbj'; // Nome do banco de dados fornecido
+        $username = 'u471146656_estoqueccbj'; // Nome do usuário MySQL fornecido
         $password = 'Estoque@ccbj400'; // Senha MySQL fornecida
 
         try {
             $this->pdo = new PDO("mysql:host=$host;dbname=$dbName;charset=utf8mb4", $username, $password);
 
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo->exec("SET time_zone = '-03:00'");
 
         } catch (PDOException $e) {
             die("Falha na conexão: " . $e->getMessage());

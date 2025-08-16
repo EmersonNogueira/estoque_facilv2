@@ -63,7 +63,7 @@
             return $stmt->execute();
         }
 
-        public function compra($quantidade, $codigo_item, $numero_nota, $data, $custo) {
+        public function compra($quantidade, $codigo_item, $numero_nota, $data, $custo,$tipo_compra) {
             $tipo = "Compra";
             $id_usuario = $_SESSION['id'] ?? null; // Garante que id_usuario pode ser NULL se não estiver definido
         
@@ -72,11 +72,13 @@
                 $this->pdo->beginTransaction();
         
                 // Insere o registro na tabela registros
-                $sql = "INSERT INTO registros (tipo, quantidade, codigo_item, numero_nota, data_registro, custo, id_usuario) 
-                        VALUES (:tipo, :quantidade, :codigo_item, :numero_nota, :data_registro, :custo, :id_usuario)";
+                $sql = "INSERT INTO registros (tipo, quantidade, codigo_item, numero_nota, data_registro, custo, id_usuario, tipo_compra) 
+                        VALUES (:tipo, :quantidade, :codigo_item, :numero_nota, :data_registro, :custo, :id_usuario, :tipo_compra)";
         
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->bindParam(':tipo', $tipo, \PDO::PARAM_STR);
+                $stmt->bindParam(':tipo_compra', $tipo_compra, \PDO::PARAM_STR);
+
                 $stmt->bindParam(':quantidade', $quantidade, \PDO::PARAM_INT);
                 $stmt->bindParam(':codigo_item', $codigo_item, \PDO::PARAM_INT);
                 $stmt->bindParam(':numero_nota', $numero_nota, \PDO::PARAM_STR);
@@ -112,6 +114,16 @@
             $stmt->bindParam(':codigo_item', $codigo_item, \PDO::PARAM_INT);
             $stmt->bindParam(':saldo_alocar', $saldo_alocar, \PDO::PARAM_INT); 
         
+            return $stmt->execute();
+        }
+        
+        public function setSaldo_alocar2($codigo_item, $saldo_adicional) {
+            $sql = "UPDATE itens SET saldo_alocar = saldo_alocar + :saldo_adicional WHERE codigo_item = :codigo_item";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':saldo_adicional', $saldo_adicional, \PDO::PARAM_INT);
+            $stmt->bindParam(':codigo_item', $codigo_item, \PDO::PARAM_INT);
+
             return $stmt->execute();
         }
 
@@ -328,33 +340,42 @@
         }
 
         public function novoregistro($tipo, $quantidade, $id_produto, $id_solicitacao, $numero_nota, $custo, $saldo, $data) {
-
             $id_usuario = $_SESSION['id'] ?? null;
 
-            $sql = "INSERT INTO registros (tipo, quantidade, codigo_item, codigo_solicitacao, numero_nota, data_registro, custo, id_usuario)
-                    VALUES (:tipo, :quantidade, :id_produto, :id_solicitacao, :numero_nota, :data_registro, :custo, :id_usuario)";
+            // Sanitize e validação
+            $quantidade = is_numeric($quantidade) ? $quantidade : 0;
+            $custo = is_numeric($custo) ? $custo : 0;
+            $data = $data ?: date('Y-m-d H:i:s');
+            try {
+                $sql = "INSERT INTO registros (
+                            tipo, quantidade, codigo_item, codigo_solicitacao, numero_nota, data_registro, custo, id_usuario
+                        ) VALUES (
+                            :tipo, :quantidade, :id_produto, :id_solicitacao, :numero_nota, :data_registro, :custo, :id_usuario
+                        )";
 
-            $stmt = $this->pdo->prepare($sql);
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->bindParam(':tipo', $tipo);
+                $stmt->bindParam(':quantidade', $quantidade);
+                $stmt->bindParam(':id_produto', $id_produto);
+                $stmt->bindParam(':id_solicitacao', $id_solicitacao);
+                $stmt->bindParam(':numero_nota', $numero_nota);
+                $stmt->bindParam(':data_registro', $data);
+                $stmt->bindParam(':custo', $custo);
+                $stmt->bindParam(':id_usuario', $id_usuario, \PDO::PARAM_INT);
 
-            $stmt->bindParam(':tipo', $tipo);
-            $stmt->bindParam(':quantidade', $quantidade);
-            $stmt->bindParam(':id_produto', $id_produto);
-            $stmt->bindParam(':id_solicitacao', $id_solicitacao);
-            $stmt->bindParam(':numero_nota', $numero_nota);
-            $stmt->bindParam(':data_registro', $data);
-            $stmt->bindParam(':custo', $custo);
-            $stmt->bindParam(':id_usuario', $id_usuario, \PDO::PARAM_INT);
-
-
-
-            if ($stmt->execute()) {
-                return true;
-            } else {
-                $erro = $stmt->errorInfo();
-                echo "Erro SQL: " . $erro[2]; // Mostra a mensagem de erro do banco
+                if ($stmt->execute()) {
+                    return true;
+                } else {
+                    $erro = $stmt->errorInfo();
+                    echo "Erro SQL: " . $erro[2];
+                    return false;
+                }
+            } catch (PDOException $e) {
+                echo "Exceção: " . $e->getMessage();
                 return false;
             }
         }
+
         
         
         public function getSaldoEstoque($id) {
@@ -391,8 +412,56 @@
 
             return $stmt->execute();     
 
-        }        
+        }
 
+
+        public function devolucao($id_registro, $quantidadeDevolvida){
+            try {
+                
+                // Passo 1: Consultar o registro para obter a quantidade atual
+                $stmt = $this->pdo->prepare("
+                    SELECT quantidade 
+                    FROM registros 
+                    WHERE codigo_registro = :id_registro
+                ");
+                $stmt->bindParam(':id_registro', $id_registro, \PDO::PARAM_INT);
+                $stmt->execute();
+
+                $registro = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+                if ($registro) {
+                    $quantidadeAtual = $registro['quantidade'];
+                    $novaQuantidade = $quantidadeAtual - $quantidadeDevolvida;
+
+                    if ($novaQuantidade < 0) {
+                        throw new \Exception("A quantidade não pode ser negativa.");
+                    }
+
+                    $stmtUpdate = $this->pdo->prepare("
+                        UPDATE registros 
+                        SET quantidade = :nova_quantidade 
+                        WHERE codigo_registro = :id_registro
+                    ");
+                    $stmtUpdate->bindParam(':nova_quantidade', $novaQuantidade, \PDO::PARAM_STR);
+                    $stmtUpdate->bindParam(':id_registro', $id_registro, \PDO::PARAM_INT);
+
+                    return $stmtUpdate->execute();
+                } else {
+                    throw new \Exception("Registro não encontrado.");
+                }
+            } catch (\PDOException $e) {
+                // Exibe erro SQL
+                echo "Erro no banco de dados: " . $e->getMessage();
+                return false;
+            } catch (\Exception $e) {
+                // Exibe outros erros
+                echo "Erro: " . $e->getMessage();
+                return false;
+            }
+        }
+
+
+        
           
         
     }

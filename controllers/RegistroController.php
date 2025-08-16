@@ -5,6 +5,56 @@
 	
 		protected $base_url;
 
+        public function __construct($view, $model) {
+            // Primeiro: inicia a sessão, se ainda não tiver sido iniciada
+            if (session_status() == PHP_SESSION_NONE) {
+                ini_set('session.cookie_lifetime', 0); // Expira ao fechar navegador
+                session_start();
+            }
+
+
+
+            // Agora pode chamar verificação de acesso e construtor pai
+            $this->checkAccess();
+            parent::__construct($view, $model);
+        }
+
+
+		private function checkAccess() {
+			// Verifica se a sessão está iniciada
+			if (!isset($_SESSION['loggedin']) || !$_SESSION['loggedin']) {
+				// Usuário não está logado, redireciona para a página de login
+				header('Location: ' . $this->base_url . 'Login/login');
+				exit;
+			}
+			//header('Location: ' . $this->base_url . 'Login/login');
+
+			// Verifica o tipo de usuário
+			if (isset($_SESSION['tipo'])) {
+				if ($_SESSION['tipo'] === 'admin' || $_SESSION['tipo']=='infra') {
+					// Se o usuário for admin, permite o acesso
+					return;
+				} elseif ($_SESSION['tipo'] === 'solicitante') {
+					// Se o usuário for solicitante, permite o acesso à rota de solicitação de produto
+					if ($_SERVER['REQUEST_URI'] ===  $this->base_url.'Solicitacao/solicitacaoproduto') {
+						return; // Permite o acesso à rota de solicitante
+					} else {
+						// Redireciona para a página de solicitação de produtos se tentar acessar outra rota
+						header('Location:'. $this->base_url.'Solicitacao/solicitacaoproduto');
+						exit;
+					}
+				} else {
+					// Se não for admin nem solicitante, exibe uma mensagem de acesso negado
+					die('Acesso negado.');
+				}
+			} else {
+
+				// Caso o tipo de usuário não esteja definido, exibe uma mensagem de erro
+				die('Tipo de usuário não definido.');
+			}
+		}
+
+
 		public function index(){
 			try {
 				$registros = $this->model->reader();
@@ -38,13 +88,20 @@
                     $custo = ($valorAtual + $valorNovo) / $saldoFinal;
                 }
 
+                // Formatação da data
+                $data = $registro["data"];
+                if (strlen($data) <= 10) { // só data, sem hora
+                    $data .= ' ' . date('H:i:s');
+                }
+
                 // Registrar compra e atualizar estoque apenas se a compra for bem-sucedida
                 if ($this->model->compra(
                     $registro["quantidade"],
                     $registro["codigo_item"],
                     $registro["numero_nota"],
-                    $registro["data"],
-                    $registro["custo_novo"]
+                    $data,
+                    $registro["custo_novo"],
+                    $registro["tipo_compra"]
                 )) {
                     $this->model->setSaldo_alocar($registro["codigo_item"], $saldoAlocar);
                     $this->model->setValorUnitario($registro["codigo_item"], $custo);
@@ -180,6 +237,38 @@
 
         
 
+        }
+
+        public function getSaldoAlocar($id_produto){
+            return $this->model->getSaldoProd($id_produto); // Retorne o saldo diretamente
+        }
+        
+
+        public function mvdevolucao(){ //ALTERAR OS DADOS DOS REGISTRO E CRIAR UM NOVO REGISTRO
+            $dados = $_POST;
+            $this->model->devolucao($dados['id_registro'],$dados['quantidadeDevolvida']); //ATUALIZAR REGISTROS
+            //$saldo = $this->getSaldoAlocar($dados['id_produto']);
+            $tipo ="Devolução";
+            $quantidade = $dados['quantidadeDevolvida'];
+            $id = $dados['id_produto'];
+            $id_solicitacao = $dados['id_solicitacao'];
+            $numero_nota = null;
+            $custo = null;
+            $saldo_final = null;
+
+            $data = isset($postData['data']) && !empty($postData['data']) 
+            ? $postData['data'] 
+            : date('Y-m-d H:i:s');
+
+            
+
+
+            $this->model->novoregistro($tipo, $quantidade, $id, $id_solicitacao, $numero_nota, $custo, $saldo_final,$data);
+
+            $this->model->setSaldo_alocar2($id,$quantidade);            
+
+            $_SESSION['mensagem_confirmacao'] = "Registro(s) de devolução efetuado com sucesso";
+            header('Location:'. $this->base_url.'Registro/entrada');
         }
                
      

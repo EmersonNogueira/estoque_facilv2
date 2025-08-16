@@ -288,11 +288,14 @@ function mostrarProdutos(codigo_solicitacao, nomeSolicitante, setor, subsetor, s
             ths.forEach((th, index) => {
                 if (th.textContent === 'Ação' || th.textContent === 'Locais/Depósitos') {
                     tabela.querySelectorAll('tr').forEach(tr => {
-                        tr.deleteCell(index);
+                        if (tr.cells.length > index) {
+                            tr.deleteCell(index);
+                        }
                     });
                 }
             });
         }
+
 
         const botoes = modalContent.querySelectorAll('.modal-botoes, button');
         botoes.forEach(botao => botao.remove());

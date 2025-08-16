@@ -257,6 +257,164 @@ public function produtosSol($codigo_solicitacao) {
 				die("Erro ao contar solicitações: " . $e->getMessage());
 			}
 		}
+        public function listarSolicitacoesPorSetor($offset = 0, $limit = 10) {
+            try {
+                $setor = $_SESSION['setor'];
+
+                $sql = "SELECT 
+                            s.codigo_solicitacao,
+                            u.nome AS usuario_criador,
+                            s.solicitante,
+                            s.setor,
+                            s.subsetor,
+                            DATE_FORMAT(s.data, '%d/%m/%Y') AS data,
+                            s.status,
+                            s.receptor,
+                            DATE_FORMAT((
+                                SELECT MIN(r.data_registro)
+                                FROM registros r
+                                WHERE r.codigo_solicitacao = s.codigo_solicitacao
+                                AND r.tipo = 'solicitacao'
+                            ), '%d/%m/%Y') AS data_finalizacao
+                        FROM 
+                            solicitacoes s
+                        JOIN 
+                            usuario u ON s.usuario_criador = u.id
+                        WHERE 
+                            s.setor = :setor
+                        ORDER BY 
+                            CASE WHEN s.status = 'Pendente' THEN 0 ELSE 1 END,
+                            s.data DESC
+                        LIMIT :offset, :limit";
+
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->bindParam(':setor', $setor, \PDO::PARAM_STR);
+                $stmt->bindParam(':offset', $offset, \PDO::PARAM_INT);
+                $stmt->bindParam(':limit', $limit, \PDO::PARAM_INT);
+                $stmt->execute();
+
+                return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            } catch (\PDOException $e) {
+                error_log("Erro ao listar solicitações do setor: " . $e->getMessage());
+                die("Erro ao listar solicitações do setor: " . $e->getMessage());
+            }
+        }
+
+        public function contarSolicitacoesPorSetor() {
+            try {
+                $setor = $_SESSION['setor'];
+
+                $sql = "SELECT COUNT(*) AS total 
+                        FROM solicitacoes 
+                        WHERE setor = :setor";
+
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->bindParam(':setor', $setor, \PDO::PARAM_STR);
+                $stmt->execute();
+                $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+                return $result['total'];
+            } catch (\PDOException $e) {
+                error_log("Erro ao contar solicitações do setor: " . $e->getMessage());
+                die("Erro ao contar solicitações do setor: " . $e->getMessage());
+            }
+        }
+
+
+
+        
+        public function reader() {
+            try {
+                $search = isset($_GET['search']) ? $_GET['search'] : '';
+
+                // Base da SQL
+                $sqlStr = "SELECT i.codigo_item, i.descricao, SUM(e.saldo) AS saldo, i.custo_unitario, i.situacao
+                        FROM itens i
+                        LEFT JOIN estoques e ON i.codigo_item = e.codigo_item";
+
+                // Filtro de visibilidade e busca
+                $where = [];
+
+                if (!isset($_SESSION['tipo']) || ($_SESSION['tipo'] !== 'admin' && $_SESSION['tipo'] !== 'infra')) {
+                    $where[] = "i.visivel = 1";
+                }
+
+                if (!empty($search)) {
+                    $where[] = "i.descricao LIKE :search";
+                }
+
+                // Aplica WHERE se necessário
+                if (!empty($where)) {
+                    $sqlStr .= " WHERE " . implode(' AND ', $where);
+                }
+
+                // Agrupamento correto
+                $sqlStr .= " GROUP BY i.codigo_item, i.descricao, i.custo_unitario";
+
+                // Filtro por saldo > 0 após o GROUP BY
+                $sqlStr .= " HAVING SUM(e.saldo) > 0";
+
+                // Prepara e executa
+                $sql = $this->pdo->prepare($sqlStr);
+
+                if (!empty($search)) {
+                    $sql->bindValue(':search', '%' . $search . '%');
+                }
+
+                $sql->execute();
+                return $sql->fetchAll(\PDO::FETCH_ASSOC);
+
+            } catch (\PDOException $e) {
+                error_log("Erro na consulta: " . $e->getMessage());
+                die("Erro na consulta: " . $e->getMessage());
+            }
+        }
+
+		// Supondo que você já tenha uma conexão com o banco de dados ($this->pdo)
+		public function inserirSolicitacao($dados) {
+			try {
+				$this->pdo->beginTransaction();
+		
+				// Inserir na tabela `solicitacoes`
+				$sqlSolicitacao = "INSERT INTO solicitacoes (usuario_criador, solicitante, setor, subsetor, data, status) 
+								VALUES (:usuario_criador, :solicitante, :setor, :subsetor, NOW(), 'Pendente')";
+				$stmtSolicitacao = $this->pdo->prepare($sqlSolicitacao);
+				$stmtSolicitacao->bindValue(':usuario_criador', $dados['usuario_id']);
+				$stmtSolicitacao->bindValue(':solicitante', $dados['solicitante']);
+				$stmtSolicitacao->bindValue(':setor', $dados['setor']);
+				$stmtSolicitacao->bindValue(':subsetor', $dados['subsetor']);
+				$stmtSolicitacao->execute();
+		
+				$idSolicitacao = $this->pdo->lastInsertId();
+		
+				// Inserir na tabela `produtos_solicitacao`
+				$sqlProdutoSolicitacao = "INSERT INTO solicitacao_item (codigo_solicitacao, codigo_item, quantidade) 
+										VALUES (:id_solicitacao, :id_produto, :quantidade)";
+				$stmtProdutoSolicitacao = $this->pdo->prepare($sqlProdutoSolicitacao);
+		
+				foreach ($dados['produtos'] as $produto) {
+					$stmtProdutoSolicitacao->bindValue(':id_solicitacao', $idSolicitacao);
+					$stmtProdutoSolicitacao->bindValue(':id_produto', $produto['id_produto']);
+					$stmtProdutoSolicitacao->bindValue(':quantidade', $produto['quantidade']);
+					$stmtProdutoSolicitacao->execute();
+				}
+		
+				$this->pdo->commit();
+		
+				// Define a mensagem de confirmação após sucesso total
+				$this->setMensagemConfirmacao("Solicitação criada com sucesso, procure o setor de infraestrutura para pegar seus produtos.");
+		
+			} catch (\PDOException $e) {
+				$this->pdo->rollBack();
+				error_log("Erro ao inserir solicitação: " . $e->getMessage());
+				die("Erro ao inserir solicitação: " . $e->getMessage());
+			}
+		}
+		
+		// Função helper para definir a mensagem de confirmação
+		private function setMensagemConfirmacao($mensagem) {
+			$_SESSION['mensagem_confirmacao'] = $mensagem;
+		}        
+
 		
 
 

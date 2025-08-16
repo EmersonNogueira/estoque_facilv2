@@ -18,6 +18,18 @@
 				// Ambiente de produção
 				$this->base_url = '/';
 			}
+
+		// Controle de inatividade
+        $timeout = 900; // 15 minutos
+
+        if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout) {
+            session_unset();
+            session_destroy();
+            header("Location: {$this->base_url}Login/login");
+            exit;
+        }
+
+        $_SESSION['LAST_ACTIVITY'] = time();
 			
 
 		}
@@ -25,3 +37,5 @@
 		public function index(){}
 	}
 ?>
+
+

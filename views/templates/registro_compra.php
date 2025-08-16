@@ -17,8 +17,8 @@
 
 
         <div class="form-group">
-            <label for="custo">Valor unitário:</label>
-            <input type="text" id="custo_novo" name="custo_novo"  oninput="validarCusto(this)" >
+            <label for="custo_novo">Valor unitário:</label>
+            <input type="text" id="custo_novo" name="custo_novo" >
         </div>
 
         <!-- Quantidade do Registro -->
@@ -26,6 +26,18 @@
             <label for="quantidade">Quantidade:</label>
             <input type="number" id="quantidade" name="quantidade" min="1" required>
         </div>
+
+        <div class="form-group">
+            <label for="tipo_compra">Tipo de Compra:</label>
+            <select id="tipo_compra" name="tipo_compra" class="form-control" required>
+                <option value="" selected>Selecione...</option>
+                <option value="Pregão">Pregão</option>
+                <option value="Dispensa de pregão">Dispensa de pregão</option>
+                <option value="Caixa">Caixa</option>
+                <option value="M.E.">M.E.</option>
+            </select>
+        </div>
+        
 
         <!-- Número da Nota -->
         <div class="form-group">
@@ -36,7 +48,7 @@
 
         <!-- Data de Entrada -->
         <div class="form-group">
-            <label for="data_entrada">Data da Nota:</label>
+            <label for="data">Data da Nota:</label>
             <input class= "filter"type="date" id="data" name="data" required>
         </div>
 
@@ -56,24 +68,6 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const tipoOperacao = document.getElementById("tipo_operacao");
-        const custoInput = document.getElementById("custo_novo");
-        const custoOriginal = "<?php echo htmlspecialchars($produto['custo']); ?>";
-
-        tipoOperacao.addEventListener("change", function () {
-            if (tipoOperacao.value === "Compra") {
-                custoInput.removeAttribute("readonly");
-                custoInput.setAttribute("required", "required");
-                custoInput.value = ""; // Deixa o campo em branco para o usuário digitar
-            } else {
-                custoInput.setAttribute("readonly", "readonly");
-                custoInput.removeAttribute("required");
-                custoInput.value = custoOriginal; // Restaura o valor original
-            }
-        });
-    });
-
 
     document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('form'); // Seleciona o formulário
@@ -125,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const dataEntrada = document.getElementById("data_entrada");
+    const dataEntrada = document.getElementById("data");
 
     // Obtém a data atual no formato YYYY-MM-DD
     const hoje = new Date().toISOString().split('T')[0];

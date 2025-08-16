@@ -28,11 +28,17 @@
         }
 
         public function logar() {
+
             $posdata = $_POST;
+            if (session_status() == PHP_SESSION_NONE) {
+                ini_set('session.cookie_lifetime', 0); // Expira ao fechar o navegador
+                session_start();
+            }
             $login = $this->model->verificarLogin($posdata['email'], $posdata['senha']);
             
             if ($login) {
                 // Definir a variável de sessão para o usuário autenticado
+                
                 $_SESSION['loggedin'] = true;
                 $_SESSION['id'] = $login['id'];
                 $_SESSION['nome'] = $login['nome'];

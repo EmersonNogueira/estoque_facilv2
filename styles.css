@@ -51,6 +51,13 @@ header {
     white-space: nowrap; /* Evita quebra de linha no texto */
 }
 
+.header-content h3 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    font-size: 16px;
+}
 
 
 
@@ -453,6 +460,7 @@ th:nth-child(7), td:nth-child(7) {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    margin-right: 210px;
 }
 
 .search-form {
@@ -1028,6 +1036,26 @@ th:nth-child(7), td:nth-child(7) {
     font-size: 16px;
 }
 
+
+
+.btn-cart {
+  margin-top: 3px;
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #8c00ff; /* Azul padrão */
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn-cart:hover {
+  background-color: #061525; /* Azul mais escuro no hover */
+}
+
+
 /* Responsividade */
 @media (max-width: 768px) {
     .form-row {
@@ -1043,4 +1071,21 @@ th:nth-child(7), td:nth-child(7) {
         flex-direction: column;
         gap: 5px;
     }
+}
+@media (max-width: 600px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-content h1, .header-content h3 {
+    font-size: 1em;
+    text-align: left;
+    width: 100%;
+  }
+
+  .header-content h3 {
+    margin-top: -25px;
+    margin-left: 30px;
+  }
 }
