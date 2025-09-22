@@ -99,5 +99,28 @@
             console.log("Erro: Elemento não encontrado.");
         }
     });
+
+
+    let baseUrl = '<?php echo $base_url; ?>'; // pega o base_url do PHP
+
+    let tempoInatividade = 1 * 60 * 1000; // 5 minutos
+    let timer;
+
+    function resetarTimer() {
+        clearTimeout(timer);
+        timer = setTimeout(deslogar, tempoInatividade);
+    }
+
+    function deslogar() {
+        // redireciona usando o base_url
+        window.location.href = baseUrl + 'Login/logoutAutomatico';
+    }
+
+    document.addEventListener('mousemove', resetarTimer);
+    document.addEventListener('keypress', resetarTimer);
+    document.addEventListener('click', resetarTimer);
+    document.addEventListener('scroll', resetarTimer);
+
+    resetarTimer();
 </script>
 

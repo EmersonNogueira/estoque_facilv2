@@ -107,6 +107,11 @@
             exit;
         }
         
+        public function logoutAutomatico() {
+            $this->logout(); // reaproveita a função existente
+        }
+
+        
         
     }
 ?>
