@@ -1,0 +1,105 @@
+/* stylelogin.css */
+
+/* Base Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f8ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #333;
+}
+
+.para{
+  text-align: center;  
+}
+
+/* Logo */
+.logo {
+    max-width: 150px; /* Ajuste o tamanho conforme necessário */
+    margin-bottom: 10px;
+}
+
+
+/* Container */
+.container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    padding: 30px;
+    text-align: center;
+}
+
+/* Header */
+.header h1 {
+    font-size: 28px;
+    color:#5c0080;
+    margin-bottom: 5px;
+}
+
+.header p {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 5px;
+    display: block;
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+input[type="text"]::placeholder, 
+input[type="password"]::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Button */
+button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #4d0080;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #b957c2;
+    transform: translateY(-2px);
+}
+
+button[type="submit"]:active {
+    background-color: #6757c2;
+}
+
+/* Error Message */
+.error-message {
+    color: #d9534f;
+    font-size: 14px;
+    margin-top: 10px;
+}

@@ -1,0 +1,1091 @@
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+/* Estilo global */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #DDDDDD; /* Cor de fundo da página */
+    font-family: "Chakra Petch", sans-serif; /* Fonte padrão */
+}
+
+/* Estilo para o main, para expandir e empurrar o footer para baixo */
+main {
+    flex: 1;
+}
+
+/* Cabeçalho */
+/* Cabeçalho */
+header {
+    background-color: #6d2380;
+    padding: 8px;
+    color: white;
+    text-align: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Mantém os itens à esquerda */
+    width: 100%;
+    height: 70px; /* Altura do header */
+    padding: 0 20px;
+    box-sizing: border-box;
+    gap: 10px; /* Espaço entre a logo e o texto */
+}
+
+.header-content .logo {
+    height: 100%;
+    max-height: 100%;
+    width: auto;
+}
+
+.header-content h1 {
+    font-size: 24px; /* Ajuste o tamanho do texto */
+    margin: 0;
+    white-space: nowrap; /* Evita quebra de linha no texto */
+}
+
+.header-content h3 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    font-size: 16px;
+}
+
+
+
+.logo {
+    height: 40px;
+    margin-right: 10px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 18px;
+    color: white;
+}
+
+.welcome {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    font-size: 16px;
+    color: #34495e;
+}
+
+.welcome span {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+/* Estilo para o menu dropdown */
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+nav li {
+    position: relative;
+    margin-right: 15px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Esconde os submenus por padrão */
+nav .dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color:  #8536a3; /* Cor de fundo do submenu */
+    padding: 10px;
+    list-style: none;
+    border-radius: 5px;
+    top: 100%;
+    left: 0;
+    width: 200px;
+}
+
+/* Exibe os submenus quando o item pai estiver em hover */
+nav li:hover .dropdown-menu {
+    display: block;
+}
+
+/* Estilo dos links dentro do dropdown */
+nav .dropdown-menu li {
+    margin: 0;
+}
+
+nav .dropdown-menu a {
+    color: white; /* Cor dos links */
+    padding: 5px 10px;
+    display: block;
+}
+
+/* Estilo para o hover no item do dropdown */
+nav .dropdown-menu a:hover {
+    background-color: #9b3fbc; /* Cor de fundo ao passar o mouse */
+}
+
+/* Responsividade (apenas para dispositivos móveis) */
+@media (max-width: 768px) {
+    /* Menu de navegação para mobile */
+    nav ul {
+        flex-direction: column; /* Alinha os itens verticalmente */
+        align-items: center;
+        width: 100%; /* Ocupa toda a largura */
+    }
+
+    nav li {
+        margin-right: 0; /* Remove a margem à direita */
+        margin-bottom: 10px; /* Adiciona espaço entre os itens */
+    }
+
+    /* Dropdown menu para mobile */
+    nav .dropdown-menu {
+        position: static; /* Remove o posicionamento absoluto */
+        width: 100%; /* Ocupa toda a largura */
+        background: none; /* Remove o fundo */
+        padding: 0; /* Remove o padding */
+    }
+
+    nav .dropdown-menu li a {
+        background-color: #173d60; /* Mantém a cor de fundo */
+        padding: 8px 10px; /* Adiciona padding */
+        border-radius: 3px; /* Adiciona bordas arredondadas */
+        display: block; /* Exibe como bloco */
+        margin-top: 5px; /* Adiciona espaço acima */
+    }
+}
+
+h1 {
+    margin-top: 1px;
+    margin-bottom: 0px;
+    font-size: 2.5rem; /* Tamanho da fonte */
+    color: #222831; /* Cor do texto */
+    text-align: center; /* Alinha o texto ao centro */
+    letter-spacing: 0.1rem; /* Espaçamento entre letras */
+}
+
+/* Estilo para o footer */
+footer {
+    background-color: #f1f1f1;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Estilos para tabelas */
+table {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 20px auto; 
+}
+
+table, th, td {
+    border: 1px solid #030303;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+th:nth-child(1), td:nth-child(1) {
+    width: 10%; /* Ajusta a largura da coluna de ID Solicitação */
+}
+
+th:nth-child(2), td:nth-child(2) {
+    width: 15%; /* Ajusta a largura da coluna Usuário Criador */
+}
+
+th:nth-child(3), td:nth-child(3) {
+    width: 15%; /* Ajusta a largura da coluna Solicitante */
+}
+
+th:nth-child(4), td:nth-child(4) {
+    width: 15%; /* Ajusta a largura da coluna Setor */
+}
+
+th:nth-child(5), td:nth-child(5) {
+    width: 15%; /* Ajusta a largura da coluna Subsetor */
+}
+
+th:nth-child(6), td:nth-child(6) {
+    width: 15%; /* Ajusta a largura da coluna Data */
+}
+
+th:nth-child(7), td:nth-child(7) {
+    width: 15%; /* Ajusta a largura da coluna Ações */
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+    table {
+        width: 100%; /* Ocupa 100% da largura da tela */
+        display: block; /* Torna a tabela um bloco para rolagem horizontal */
+        overflow-x: auto; /* Permite rolagem horizontal */
+        white-space: nowrap; /* Impede que o texto quebre em várias linhas */
+    }
+
+    th, td {
+        padding: 8px; /* Reduz o padding para economizar espaço */
+    }
+
+    /* Ajusta as larguras das colunas para dispositivos móveis */
+    th:nth-child(1), td:nth-child(1),
+    th:nth-child(2), td:nth-child(2),
+    th:nth-child(3), td:nth-child(3),
+    th:nth-child(4), td:nth-child(4),
+    th:nth-child(5), td:nth-child(5),
+    th:nth-child(6), td:nth-child(6),
+    th:nth-child(7), td:nth-child(7) {
+        width: auto; /* Largura automática para ajustar ao conteúdo */
+    }
+}
+
+
+.btn-devolucao {
+    display: none;
+}
+
+.card {
+    cursor: pointer; /* Muda o cursor para indicar que o card é clicável */
+}
+
+.card-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0px; /* Espaçamento entre os botões */
+    width: 100%;
+}
+
+.card-buttons form {
+    width: 100%;
+}
+
+.card-buttons button {
+    width: 100%;
+    padding: 2px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #723581; /* Cor do botão */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.card-buttons button:hover {
+    background-color: #571a66; /* Cor ao passar o mouse */
+}
+
+.btn-alocar:disabled {
+    background-color: #6c757d; /* Cinza */
+    color: #e9ecef;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+.btn-alocar {
+    width: 100%; /* Ocupa toda a largura do card */
+    padding: 3px; /* Ajuste do padding para um tamanho adequado */
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #6d2380; /* Cor do botão */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-bottom: 3px;
+}
+
+.btn-alocar:hover {
+    background-color: #551a63; /* Tom mais escuro ao passar o mouse */
+}
+
+
+
+/* Estilos para botões */
+.btn-add-new, .btn-register, .btn-edit,.btn-devolucao, .btn-verprodutos {
+    border: none;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.btn-devolucao {
+    background-color:#17605c; /* Cor do botão */
+    color: white;
+}
+
+.btn-add-new:hover {
+    background-color:#173d60; /* Azul escuro */
+}
+
+.btn-register, .btn-verprodutos {
+    background-color: #4a1760; /* Cor do botão */
+    color: white;
+}
+
+.btn-register:hover,.btn-verprodutos:hover {
+    background-color: #1f4417;
+}
+
+
+.btn-edit {
+    background-color:#6b8e23; /* Cor do botão */
+    color: white; /* Cor do texto do botão */
+}
+
+.btn-edit:hover {
+    background-color:#1f4417; /* Azul escuro */
+}
+
+/* Estilos específicos para a página de cadastro de produtos */
+.add-product-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-product-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.add-product-container .form-group {
+    margin-bottom: 15px;
+}
+
+.add-product-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.add-product-container input[type="text"],
+.add-product-container input[type="number"],
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.add-product-container button.btn-submit {
+    width: 100%;
+    padding: 15px;
+    background-color: #28a745; /* Verde padrão */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.add-product-container button.btn-submit:hover {
+    background-color: #218838; /* Verde escuro */
+}
+
+/* Estilo do campo select */
+.form-group select {
+    appearance: none; /* Remove a aparência padrão do navegador */
+    cursor: pointer; /* Muda o cursor para indicar que o campo é clicável */
+}
+
+.form-group select:focus {
+    border-color: #28a745; /* Cor da borda quando o campo está em foco */
+    outline: none; /* Remove o contorno padrão ao focar */
+}
+
+/* Estilo do modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 400px;
+    margin: auto;
+}
+
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Estilo da barra superior e da barra de busca */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-right: 210px;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.hidden-column {
+    display: none;
+}
+
+/* Estilos para cartões */
+.card {
+    background-color: #f9f9f9; /* Cor de fundo do cartão */
+    border: 1px solid #ccc; /* Borda do cartão */
+    border-radius: 8px; /* Cantos arredondados */
+    padding: 15px; /* Reduzir o espaçamento interno do cartão */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra do cartão */
+    width: 250px; /* Reduzir a largura do cartão para torná-lo mais retangular */
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Reduzir o espaço entre os cartões */
+    justify-content: center; /* Centraliza os cartões na linha */
+}
+
+
+.card h2 {
+    font-size: 1.0em; /* Tamanho da fonte do título */
+    margin: 0 0 10px; /* Margem inferior do título */
+}
+
+.card p {
+    margin: 5px 0; /* Margem entre os parágrafos */
+}
+
+
+
+.no-products {
+    text-align: center; /* Centraliza o texto */
+    font-size: 1.2em; /* Tamanho da fonte */
+    color: #666; /* Cor do texto */
+}
+
+
+.quantity-input {
+    width: 60px; /* Define a largura do campo */
+    padding: 5px; /* Adiciona preenchimento interno */
+    font-size: 14px; /* Ajusta o tamanho da fonte */
+    border: 1px solid #ccc; /* Borda padrão */
+    border-radius: 4px; /* Bordas arredondadas */
+    margin-left: 10px; /* Espaçamento à esquerda */
+    transition: border-color 0.3s; /* Transição suave para mudança de cor */
+}
+
+.quantity-input:focus {
+    border-color: #007bff; /* Cor da borda ao focar no input */
+    outline: none; /* Remove a borda de foco padrão */
+}
+
+.modal {
+    display: none; /* Oculta o modal por padrão */
+    position: fixed; /* Fixa o modal na tela */
+    z-index: 1; /* Coloca o modal acima de outros elementos */
+    left: 0;
+    top: 0;
+    width: 100%; /* Largura total */
+    height: 100%; /* Altura total */
+    overflow: auto; /* Habilita rolagem se necessário */
+    background-color: rgb(0,0,0); /* Fundo preto */
+    background-color: rgba(0,0,0,0.4); /* Fundo preto com opacidade */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* Margens automáticas para centralizar */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Largura do modal */
+    max-width: 600px; /* Largura máxima */
+    border-radius: 5px; /* Bordas arredondadas */
+}
+
+.close {
+    color: #aaa; /* Cor do 'X' de fechar */
+    float: right; /* Alinhamento à direita */
+    font-size: 28px; /* Tamanho da fonte */
+    font-weight: bold; /* Negrito */
+}
+
+.close:hover,
+.close:focus {
+    color: black; /* Muda a cor ao passar o mouse */
+    text-decoration: none; /* Remove o sublinhado */
+    cursor: pointer; /* Muda o cursor para pointer */
+}
+
+
+/* Modal background overlay */
+.modal {
+    display: none; /* Inicialmente escondido */
+    position: fixed;
+    z-index: 1000; /* Fica acima de outros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Overlay escuro */
+}
+
+/* Modal content box */
+.modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    max-width: 800px; /* Largura máxima */
+    width: 90%; /* Responsivo em telas menores */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease; /* Animação de entrada */
+}
+
+/* Close button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #aaa;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close:hover,
+.close:focus {
+    color: #444;
+}
+
+/* Form field styles */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group select:focus {
+    border-color: #007bff;
+}
+
+/* Submit button */
+#btn-enviar-pedido {
+    background-color:  #0c710c;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+#btn-enviar-pedido:hover {
+    background-color: #129343;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+/* Estilo para o contêiner dos botões */
+.modal-botoes {
+    display: flex;
+    justify-content: flex-end; /* Alinha os botões à direita */
+    gap: 10px; /* Espaçamento entre os botões */
+    margin-top: 20px; /* Margem para afastar os botões do conteúdo */
+}
+
+/* Estilos para o botão Finalizar (caso queira personalizar mais) */
+.modal-botoes button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #4CAF50; /* Cor verde para o botão */
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.modal-botoes button:hover {
+    background-color: #45a049; /* Efeito hover para o botão */
+}
+
+
+/* Ajuste especial para botões */
+.search-button,
+.imprimir-btn {
+    padding: 10px 15px;
+    background-color:#008000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.imprimir-btn {
+    flex-shrink: 0; /* Evita que o botão diminua ou quebre linha */
+    white-space: nowrap; /* Impede que o texto do botão quebre */
+}
+
+/* Estilos para a parte dos filtros */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 1550px;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+}
+
+/* Nova regra para colocar as datas em uma linha separada e centralizada */
+.date-filters {
+    display: flex;
+    justify-content: center; /* Centraliza na linha */
+    gap: 10px;
+    width: 100%; /* Faz os inputs de data quebrarem para a nova linha */
+    margin-top: 10px;
+}
+
+/* Ajusta os rótulos */
+.filters label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 2px;
+    display: block;
+}
+
+/* Ajusta os campos de entrada */
+.filters select,
+.filters input, .search-input {
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    min-width: 150px;
+    width: auto;
+    flex: none;
+}
+
+
+
+/* Responsividade */
+@media (max-width: 1024px) {
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filters label,
+    .filters select,
+    .filters input,
+    .filters button {
+        width: 100%;
+    }
+
+    .date-filters {
+        flex-direction: column; /* Em telas menores, coloca as datas uma abaixo da outra */
+        align-items: center;
+    }
+}
+
+
+/* Estilos para o contêiner da paginação */
+.pagination {
+    display: flex;
+    justify-content: center; /* Centraliza os itens */
+    gap: 10px; /* Espaçamento entre os botões */
+    margin-top: 20px; /* Espaço acima da paginação */
+}
+
+/* Estilos para os links de paginação */
+.pagination a {
+    padding: 10px 20px;
+    border: 1px solid #ddd; /* Borda fina */
+    border-radius: 5px; /* Bordas arredondadas */
+    text-decoration: none;
+    color:#0c710c; /* Cor do texto */
+    font-weight: bold;
+    background-color: #f8f9fa; /* Cor de fundo dos links */
+    transition: background-color 0.3s, color 0.3s; /* Efeito de transição suave */
+}
+
+/* Estilos para o link da página atual */
+.pagination a.active {
+    background-color: #011f06; /* Cor de fundo da página ativa */
+    color: #fff; /* Cor do texto da página ativa */
+    border-color: #007bff; /* Cor da borda da página ativa */
+}
+
+/* Efeito de hover para os links de paginação */
+.pagination a:hover {
+    background-color: #00ff2a; /* Cor de fundo ao passar o mouse */
+    color: white; /* Cor do texto ao passar o mouse */
+    border-color: #007bff; /* Cor da borda ao passar o mouse */
+}
+
+/* Estilos para os links "Anterior" e "Próximo" */
+.pagination .prev, .pagination .next {
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
+}
+
+/* Estilo para os links "Anterior" e "Próximo" ao passar o mouse */
+.pagination .prev:hover, .pagination .next:hover {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+
+.notificacao {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transform: translateX(150%);
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    max-width: 350px;
+    opacity: 0;
+}
+
+.notificacao.visivel {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notificacao.sucesso {
+    background-color: #28a745;
+}
+
+.notificacao.erro {
+    background-color: #dc3545;
+}
+
+.notificacao.info {
+    background-color: #17a2b8;
+}
+
+
+/* Estilo para ajuste de estoque */
+
+
+/* Reset e estilos base */
+.stock-adjustment-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    color: #333;
+}
+
+.adjustment-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.adjustment-title {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.product-summary {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.product-name {
+    color: #2c3e50;
+    margin: 0 0 10px 0;
+    font-size: 20px;
+}
+
+.product-code {
+    color: #7f8c8d;
+    margin: 0 0 15px 0;
+    font-size: 14px;
+}
+
+.product-location {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.location-info, .deposit-info {
+    font-size: 14px;
+    color: #555;
+}
+
+/* Estilos dos formulários */
+.stock-adjustment-form {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid #e0e0e0;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.form-column {
+    flex: 1;
+    min-width: 200px;
+}
+
+.stock-info {
+    padding: 10px;
+}
+
+.stock-detail-card {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    height: 100%;
+}
+
+.detail-group {
+    margin-bottom: 15px;
+}
+
+.detail-label {
+    display: block;
+    font-weight: 600;
+    color: #555;
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
+.detail-value {
+    display: block;
+    font-size: 15px;
+    color: #333;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 16px;
+}
+
+.adjustment-controls {
+    padding: 10px;
+}
+
+.action-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-field {
+    margin-bottom: 15px;
+}
+
+.field-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.field-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.field-input:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.field-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+    cursor: pointer;
+}
+
+/* Botão de ajuste */
+.adjustment-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+.adjustment-button:hover {
+    background-color: #2980b9;
+}
+
+.button-icon {
+    font-size: 16px;
+}
+
+
+
+.btn-cart {
+  margin-top: 3px;
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #8c00ff; /* Azul padrão */
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn-cart:hover {
+  background-color: #061525; /* Azul mais escuro no hover */
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .action-column {
+        justify-content: flex-start;
+        margin-top: 15px;
+    }
+    
+    .product-location {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+@media (max-width: 600px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-content h1, .header-content h3 {
+    font-size: 1em;
+    text-align: left;
+    width: 100%;
+  }
+
+  .header-content h3 {
+    margin-top: -25px;
+    margin-left: 30px;
+  }
+}
