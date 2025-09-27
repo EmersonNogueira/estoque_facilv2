@@ -270,8 +270,8 @@
             $_SESSION['mensagem_confirmacao'] = "Registro(s) de devolução efetuado com sucesso";
             header('Location:'. $this->base_url.'Registro/entrada');
         }
-               
-     
+
+
     }
 
 ?>

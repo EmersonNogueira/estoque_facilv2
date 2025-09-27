@@ -103,7 +103,7 @@
 
     let baseUrl = '<?php echo $base_url; ?>'; // pega o base_url do PHP
 
-    let tempoInatividade = 1 * 60 * 1000; // 5 minutos
+    let tempoInatividade = 10 * 60 * 1000; // 10 minutos
     let timer;
 
     function resetarTimer() {

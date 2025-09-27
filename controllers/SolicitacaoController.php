@@ -316,7 +316,15 @@ class SolicitacaoController extends Controller {
         $_SESSION['solicitacao'] = [];
 
         
-    }       
+    } 
+    
+    public function pedidoSeparado($codigo_solicitacao) {
+        $a = $this->model->pedidoSeparado($codigo_solicitacao);
+        $_SESSION['mensagem_confirmacao'] = "Pedido separado com sucesso.";
+
+        header("Location: {$this->base_url}Solicitacao/index");
+    }
+
 
 
 }

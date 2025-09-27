@@ -22,7 +22,7 @@
                         JOIN 
                             usuario u ON s.usuario_criador = u.id
                         WHERE 
-                            s.status = 'Pendente'  -- Filtra as solicitações com status 'Pendente'
+                            s.status IN ('Pendente', 'Separado')
                         ORDER BY 
                             s.data ASC";  // Ordena por data
 
@@ -436,7 +436,33 @@ public function produtosSol($codigo_solicitacao) {
 		// Função helper para definir a mensagem de confirmação
 		private function setMensagemConfirmacao($mensagem) {
 			$_SESSION['mensagem_confirmacao'] = $mensagem;
-		}        
+		}   
+        
+        
+        public function pedidoSeparado($codigo_solicitacao) {
+            try {
+                // Atualiza o status da solicitação para 'Pedido Separado'
+                $sql = "UPDATE solicitacoes 
+                        SET status = 'separado' 
+                        WHERE codigo_solicitacao = :codigo_solicitacao";
+                
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->bindValue(':codigo_solicitacao', $codigo_solicitacao, \PDO::PARAM_INT);
+                $stmt->execute();
+                
+                if ($stmt->rowCount() > 0) {
+                    // Sucesso na atualização
+                    return ['sucesso' => 'Status atualizado para Pedido Separado.'];
+                } else {
+                    // Nenhuma linha foi atualizada (possivelmente código inválido)
+                    return ['erro' => 'Nenhuma alteração foi realizada. Verifique o código da solicitação.'];
+                }
+                
+            } catch (\PDOException $e) {
+                error_log("Erro ao atualizar status da solicitação: " . $e->getMessage());
+                return ['erro' => 'Erro ao atualizar status: ' . $e->getMessage()];
+            }
+        }
 
 		
 
